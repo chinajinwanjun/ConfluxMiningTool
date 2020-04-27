@@ -33,7 +33,19 @@ namespace ConfluxMiningTool.Models
         {
             var chart = new Chart();
             var address = addresses.Split(',');
-            var list = db.BalanceHistory.Where(x => x.Address == address[0]).OrderByDescending(x => x.ID).Take(100).OrderBy(x => x.ID).ToList();
+            var maxCount = 0;
+            var maxAddress = "";
+            foreach (var tmpAddress  in address)
+            {
+                var currentCnt= db.BalanceHistory.Where(x => x.Address == tmpAddress).Count();
+                if (currentCnt>maxCount)
+                {
+                    maxCount = currentCnt;
+                    maxAddress = tmpAddress;
+                }
+            }
+            var list = db.BalanceHistory.Where(x => x.Address == maxAddress).OrderByDescending(x => x.ID).Take(100).OrderBy(x => x.ID).ToList();
+
             chart.labels = new List<string>();
             chart.datasets = new List<Chart.D>();
             var xs = new List<double>();

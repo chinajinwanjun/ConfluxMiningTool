@@ -14,7 +14,7 @@
     <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
         <div class="card-block g-font-weight-200 g-pa-20">
             <h1>  @Configuration.GetSection("WebsiteName").Value </h1>
-         可选网络   <a href="http://47.91.220.168:9999"> <b>Conflux Pontus  </b>    </a>|  <a href="http://47.91.220.168:8888">  <b> Conflux 测试网  </b>   </a>
+            可选网络   <a href="http://47.91.220.168:9999"> <b>Conflux Pontus  </b>    </a>|  <a href="http://47.91.220.168:8888">  <b> Conflux 测试网  </b>   </a>
         </div>
     </div>
     <!-- End Panel -->
@@ -84,19 +84,35 @@
         });
         return data;
     }
+    $.urlParam = function (name) {
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results == null) {
+            return null;
+        }
+        return decodeURI(results[1]) || 0;
+    }
+
     var localAddress = localStorage.getItem('address');
+
     if (localAddress) {
+        if (!$.urlParam('address')) {
+            location.href = location.href + "?address=" + localAddress;
+        }
         $('#txtAddress').val(localAddress);
     }
+    //if ($.urlParam('address')) {
+    //    $('#txtAddress').val($.urlParam('address'));
+    //}
     $('#btnSubmit').click(function () {
         localStorage.setItem('address', $('#txtAddress').val());
-        location.reload();
+        location.href =location.protocol+'//' + window.location.hostname  + ":"+window.location.port + "?address=" +  $('#txtAddress').val();
+ 
     });
     var data = ajax();
 
     setInterval(function () {
         location.reload();
-    }, 20000);
+    }, 40000);
     console.log(data, 64, generateData())
     var options = {
         legend: false,
