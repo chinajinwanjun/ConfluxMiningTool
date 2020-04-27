@@ -1,0 +1,109 @@
+﻿<div style="width:60%;margin:auto;">
+    <div class="row">
+        <!-- 1-st column -->
+        <div class="col-md-12">
+            <!-- Basic Text Inputs -->
+            <div class="g-brd-around g-brd-gray-light-v7 g-rounded-4 g-pa-15 g-pa-20--md g-mb-30">
+                <h1 class="g-font-weight-300 g-font-size-28 g-color-black g-mb-28">注册挖矿信息</h1>
+
+                <!-- Default Input -->
+                <div class="form-group  ">
+                    <label class="g-mb-10" for="inputGroup-1_1">钱包地址</label>
+
+                    <div class="g-pos-rel">
+                        <span class="g-pos-abs g-top-0 g-right-0 d-block g-width-40 h-100 opacity-0 g-opacity-1--success">
+                            <i class="hs-admin-check g-absolute-centered g-font-size-default g-color-secondary"></i>
+                        </span>
+                        <input id="Address" class="form-control form-control-md g-brd-gray-light-v7 g-brd-gray-light-v3--focus g-rounded-20 g-px-14 g-py-10" type="text" placeholder="0x00000000000000000000000000">
+                    </div>
+                </div>
+                <!-- End Default Input -->
+                <!-- With Text Line -->
+                <div class="form-group  ">
+                    <label class="g-mb-10" for="inputGroup-1_2">操作系统</label>
+
+                    <div class="g-pos-rel">
+                        <span class="g-pos-abs g-top-0 g-right-0 d-block g-width-40 h-100 opacity-0 g-opacity-1--success">
+                            <i class="hs-admin-check g-absolute-centered g-font-size-default g-color-secondary"></i>
+                        </span>
+                        <input id="OS" class="form-control form-control-md g-brd-gray-light-v7 g-brd-gray-light-v3--focus g-rounded-20 g-px-14 g-py-10" type="text" placeholder="操作系统">
+                    </div>
+                </div>
+                <!-- End With Text Line -->
+                <!-- With Icon -->
+                <div class="form-group g-mb-30">
+                    <label class="g-mb-10" for="inputGroup-1_3">CPU型号</label>
+
+                    <div class="g-pos-rel">
+                        <span class="g-pos-abs g-top-0 g-right-0 d-block g-width-50 h-100">
+                            <i class="hs-admin-search g-absolute-centered g-font-size-16 g-color-gray-light-v6"></i>
+                        </span>
+                        <input id="CPU" class="form-control form-control-md g-brd-gray-light-v7 g-brd-gray-light-v3--focus g-rounded-20 g-px-14 g-py-10" type="text" placeholder="CPU型号">
+                    </div>
+                </div>
+                <!-- End With Icon -->
+                <!-- With Button (Colorful BG) -->
+                <div class="form-group">
+                    <label class="g-mb-10" for="inputGroup-1_4">内存</label>
+
+                    <div class="g-pos-rel">
+
+                        <input id="Memory" class="form-control form-control-md g-brd-gray-light-v7 g-brd-gray-light-v3--focus g-rounded-20 g-px-14 g-py-10" type="text" placeholder="内存">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="g-mb-10" for="inputGroup-1_4">磁盘</label>
+
+                    <div class="g-pos-rel">
+
+                        <input id="Disk" class="form-control form-control-md g-brd-gray-light-v7 g-brd-gray-light-v3--focus g-rounded-20 g-px-14 g-py-10" type="text" placeholder="磁盘">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="g-mb-10" for="inputGroup-1_4">电话号码</label>
+
+                    <div class="g-pos-rel">
+
+                        <input id="PhoneNumber" class="form-control form-control-md g-brd-gray-light-v7 g-brd-gray-light-v3--focus g-rounded-20 g-px-14 g-py-10" type="text" placeholder="电话号码">
+                    </div>
+                </div>
+                <div class="media-body align-self-center text-center">
+                    <a class="btn btn-xl u-btn-primary g-width-160--md g-font-size-default g-ml-10" id="btnSubmit">订阅钱包</a>
+                </div>
+                <!-- End With Button (Colorful BG) -->
+            </div>
+            <!-- End Basic Text Inputs -->
+            <!-- Square Inputs -->
+            <!-- End Square Inputs -->
+        </div>
+        <!-- End 1-st column -->
+        <!-- 2-nd column -->
+        <!-- End 2-nd column -->
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#btnSubmit').click(function () {
+            $.ajax({
+                async: false,
+                type: "post",
+                url: "/Home/AddAccount",
+                data: {
+                    Address: $('#Address').val(),
+                    OS: $('#OS').val(),
+                    CPU: $('#CPU').val(),
+                    Memory: $('#Memory').val(),
+                    Disk: $('#Disk').val(),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                },
+                success: function (children) {
+                    localStorage.setItem('address', $('#Address').val());
+                    location.href = "/home/index";
+                }
+            });
+        });
+
+
+    })
+</script>
