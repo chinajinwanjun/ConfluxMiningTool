@@ -74,7 +74,7 @@
         $.ajax({
             async: false,
             type: "get",
-            url: "/home/GetChartByAddress?address=" + $('#txtAddress').val(),
+            url: "/home/GetChartByAddress?address=" + $.urlParam('address'),
             data: {
 
             },
@@ -93,20 +93,25 @@
     }
 
     var localAddress = localStorage.getItem('address');
+    //if has url then use it.
+    if ($.urlParam('address')) {
 
-    if (localAddress) {
-        if (!$.urlParam('address')) {
+    } else {
+        //else use local storage.
+        if (localAddress) {
             location.href = location.href + "?address=" + localAddress;
+            $('#txtAddress').val(localAddress);
         }
-        $('#txtAddress').val(localAddress);
     }
+
     //if ($.urlParam('address')) {
     //    $('#txtAddress').val($.urlParam('address'));
     //}
+    $('#txtAddress').val($.urlParam('address'))
     $('#btnSubmit').click(function () {
         localStorage.setItem('address', $('#txtAddress').val());
-        location.href =location.protocol+'//' + window.location.hostname  + ":"+window.location.port + "?address=" +  $('#txtAddress').val();
- 
+        location.href = location.protocol + '//' + window.location.hostname + ":" + window.location.port + "?address=" + $('#txtAddress').val();
+
     });
     var data = ajax();
 
@@ -126,7 +131,7 @@
             }
         }, title: {
             display: true,
-            text: $('#txtAddress').val()
+            text: $.urlParam('address')
         }
     };
 
@@ -135,7 +140,7 @@
         data: data,
         options: options
     });
-
+    console.log(data, options, 142222)
 
     // eslint-disable-next-line no-unused-vars
     function addDataset() {
