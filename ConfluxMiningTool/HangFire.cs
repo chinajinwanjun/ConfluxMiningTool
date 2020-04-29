@@ -55,7 +55,7 @@ namespace ConfluxMiningTool
                 dynamic json = JsonConvert.DeserializeObject(http.GetAsync($@"{configuration.GetSection("Url").Value}?address={address}").Result.Content.ReadAsStringAsync().Result);
                 return Convert.ToDouble(json.result.balance.ToString()) / 1000000000000000000;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return -1;
             }

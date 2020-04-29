@@ -35,10 +35,10 @@ namespace ConfluxMiningTool.Models
             var address = addresses.Split(',');
             var maxCount = 0;
             var maxAddress = "";
-            foreach (var tmpAddress  in address)
+            foreach (var tmpAddress in address)
             {
-                var currentCnt= db.BalanceHistory.Where(x => x.Address == tmpAddress).Count();
-                if (currentCnt>maxCount)
+                var currentCnt = db.BalanceHistory.Where(x => x.Address == tmpAddress).Count();
+                if (currentCnt > maxCount)
                 {
                     maxCount = currentCnt;
                     maxAddress = tmpAddress;
@@ -53,15 +53,23 @@ namespace ConfluxMiningTool.Models
             {
                 chart.labels.Add(item.CreatedTime.ToString("HH:mm"));
             }
+            var pointLength = list.Count;
             foreach (var a in addresses.Split(','))
             {
                 Chart.D d = new Chart.D();
                 d.data = new List<double>();
-                var balanceHistorys = db.BalanceHistory.Where(x => x.Address == a).OrderByDescending(x => x.ID).Take(100).OrderBy(x => x.ID).ToList();
+                for (int i = 0; i < pointLength; i++)
+                {
+                    d.data.Add(0);
+                }
+                var balanceHistorys = db.BalanceHistory.Where(x => x.Address == a).OrderByDescending(x => x.ID).Take(100).OrderByDescending(x => x.ID).ToList();
+                var index = 0;
                 foreach (var balanceHistory in balanceHistorys)
                 {
-                    d.data.Add(Math.Round(balanceHistory.Balance, 2));
+                    d.data[index] = Math.Round(balanceHistory.Balance, 2);
+                    index++;
                 }
+                d.data.Reverse();
                 chart.datasets.Add(d);
             }
             return chart;
