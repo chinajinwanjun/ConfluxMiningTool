@@ -15,18 +15,26 @@ namespace ConfluxMiningTool.Controllers
 
         private readonly IBalanceHistoryRepository _balanceHistory;
         private readonly IAccountRepository accountRepository;
-        public HomeController(ILogger<HomeController> logger, IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository)
+        private readonly ITrustNodeRepository trustNodeRepository;
+        public HomeController(ILogger<HomeController> logger, IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, ITrustNodeRepository trustNodeRepository)
         {
             _logger = logger;
             this.accountRepository = accountRepository;
             this._balanceHistory = balanceHistory;
+            this.trustNodeRepository = trustNodeRepository;
         }
 
         public IActionResult Index()
         {
+            ViewBag.trustNodes = trustNodeRepository.GetAll();
+            ViewBag.trustedWalletAddress = trustNodeRepository.GetTrustedWalletAddress();
             return View();
         }
-
+        public IActionResult TrustedNode()
+        {
+         
+            return View();
+        }
         [HttpGet]
         public JsonResult GetChartByAddress(string address)
         {
@@ -50,5 +58,12 @@ namespace ConfluxMiningTool.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public JsonResult StoreTrustNode(string info)
+        {
+            this.trustNodeRepository.Store(info);
+            return Json(1);
+        }
+
+
     }
 }

@@ -28,11 +28,70 @@
             </div>
         </div>
     </div>
+    <div class="media-body align-self-center text-center">
+        <a class="btn btn-xl u-btn-primary g-width-160--md g-font-size-default g-ml-10" id="btnSubmit">查询</a>
+    </div>
+    <hr />
+    <div class="wrapper card h-100 g-brd-gray-light-v7 g-rounded-3">
+        安装检查信任节点软件。
+        <ul>
+            <li>step 1. 下载<a href="http://47.91.220.168:8888/IsTrustedNode.zip">压缩包 </a></li>
+            <li> step 2. 解压出exe文件</li>
+            <li>step 3. 把exe文件放到run目录下双击运行即可</li>
+        </ul>
+        <h1>信任钱包地址</h1>
+        <ul>
+            @if (ViewBag.trustedWalletAddress.Count== 0)
+            {
+                <text>
+                    当前没有信任地址
+                </text>
+            }
+            @foreach (var item in ViewBag.trustedWalletAddress)
+            {
+                <li>
+                    @item
+                </li>
+            }
+        </ul>
+        <h1>节点列表</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        钱包地址
+                    </th>
+                    <th>
+                        公网IP 列表
+                    </th>
+                    <th>
+                        信任IP列表
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var trustNode in ViewBag.trustNodes)
+                {
+                    <tr>
+                        <td>
+                            @trustNode.WalletAddress
+                        </td>
+                        <td>
+                            @trustNode.IPAddressList
+                        </td>
+                        <td>
+                            @trustNode.TrustedIPList
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
+
+
+    </div>
 </div>
-<div class="media-body align-self-center text-center">
-    <a class="btn btn-xl u-btn-primary g-width-160--md g-font-size-default g-ml-10" id="btnSubmit">查询</a>
-</div>
+
 <script>
     var DATA_COUNT = 12;
 
