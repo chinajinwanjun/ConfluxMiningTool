@@ -44,14 +44,14 @@ namespace ConfluxMiningTool.Models
                     maxAddress = tmpAddress;
                 }
             }
-            var list = db.BalanceHistory.Where(x => x.Address == maxAddress).OrderByDescending(x => x.ID).Take(100).OrderBy(x => x.ID).ToList();
+            var list = db.BalanceHistory.Where(x => x.Address == maxAddress).OrderByDescending(x => x.ID).Take(1000).OrderBy(x => x.ID).ToList();
 
             chart.labels = new List<string>();
             chart.datasets = new List<Chart.D>();
             var xs = new List<double>();
             foreach (var item in list)
             {
-                chart.labels.Add(item.CreatedTime.ToString("HH:mm"));
+                chart.labels.Add(item.CreatedTime.ToString("MM/dd HH:mm"));
             }
             var pointLength = list.Count;
             foreach (var a in addresses.Split(','))
@@ -62,7 +62,7 @@ namespace ConfluxMiningTool.Models
                 {
                     d.data.Add(0);
                 }
-                var balanceHistorys = db.BalanceHistory.Where(x => x.Address == a).OrderByDescending(x => x.ID).Take(100).OrderByDescending(x => x.ID).ToList();
+                var balanceHistorys = db.BalanceHistory.Where(x => x.Address == a).OrderByDescending(x => x.ID).Take(1000).OrderByDescending(x => x.ID).ToList();
                 var index = 0;
                 foreach (var balanceHistory in balanceHistorys)
                 {

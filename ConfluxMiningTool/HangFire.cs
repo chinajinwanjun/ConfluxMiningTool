@@ -27,7 +27,7 @@ namespace ConfluxMiningTool
         }
         public void AddJob()
         {
-            RecurringJob.AddOrUpdate(() => WriteMiningData(),  "*/5 * * * *");
+            RecurringJob.AddOrUpdate(() => WriteMiningData(),  "*/30 * * * *");
         }
 
         public void WriteMiningData()
