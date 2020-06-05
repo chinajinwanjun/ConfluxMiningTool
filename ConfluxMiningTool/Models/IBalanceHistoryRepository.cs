@@ -8,6 +8,6 @@ namespace ConfluxMiningTool.Models
     public interface IBalanceHistoryRepository
     {
         public void Add(BalanceHistory balanceHistory);
-        public dynamic GetChartByAddress(string address);
+        public dynamic GetChartByAddress(string address, int range = 100);
     }
 }

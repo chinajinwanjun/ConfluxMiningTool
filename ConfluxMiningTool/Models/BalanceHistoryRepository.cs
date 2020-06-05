@@ -29,7 +29,7 @@ namespace ConfluxMiningTool.Models
             db.SaveChanges();
         }
 
-        public dynamic GetChartByAddress(string addresses)
+        public dynamic GetChartByAddress(string addresses, int range = 100)
         {
             var chart = new Chart();
             var address = addresses.Split(',');
@@ -44,7 +44,8 @@ namespace ConfluxMiningTool.Models
                     maxAddress = tmpAddress;
                 }
             }
-            var list = db.BalanceHistory.Where(x => x.Address == maxAddress).OrderByDescending(x => x.ID).Take(1000).OrderBy(x => x.ID).ToList();
+            var newStage = new DateTime(2020, 6, 4, 16, 0, 0);
+            var list = db.BalanceHistory.Where(x => x.Address == maxAddress && x.CreatedTime >= DateTime.Now.AddDays(-range) && x.CreatedTime > newStage).OrderByDescending(x => x.ID).Take(720).OrderBy(x => x.ID).ToList();
 
             chart.labels = new List<string>();
             chart.datasets = new List<Chart.D>();
@@ -62,7 +63,7 @@ namespace ConfluxMiningTool.Models
                 {
                     d.data.Add(0);
                 }
-                var balanceHistorys = db.BalanceHistory.Where(x => x.Address == a).OrderByDescending(x => x.ID).Take(1000).OrderByDescending(x => x.ID).ToList();
+                var balanceHistorys = db.BalanceHistory.Where(x => x.Address == a && x.CreatedTime >= DateTime.Now.AddDays(-range)&&x.CreatedTime> newStage).OrderByDescending(x => x.ID).Take(720).OrderByDescending(x => x.ID).ToList();
                 var index = 0;
                 foreach (var balanceHistory in balanceHistorys)
                 {
