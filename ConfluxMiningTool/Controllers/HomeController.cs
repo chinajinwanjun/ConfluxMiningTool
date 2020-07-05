@@ -28,6 +28,9 @@ namespace ConfluxMiningTool.Controllers
         {
             ViewBag.trustNodes = trustNodeRepository.GetAll();
             ViewBag.trustedWalletAddress = trustNodeRepository.GetTrustedWalletAddress();
+
+            ViewBag.trustNodesActive = trustNodeRepository.GetAllActive();
+            ViewBag.trustedWalletAddressActive = trustNodeRepository.GetTrustedWalletAddressActive();
             return View();
         }
         public IActionResult TrustedNode()

@@ -17,10 +17,37 @@ namespace ConfluxMiningTool.Models
         {
             return db.TrustNode.ToList();
         }
+        public List<ActiveTrustNode> GetAllActive()
+        {
+            var threeDaysAgo = DateTime.Now.AddDays(-3);
+            return db.ActiveTrustNode.Where(x => x.CreatedDate >= threeDaysAgo).ToList();
+        }
         public List<string> GetTrustedWalletAddress()
         {
             List<string> luckTrustedWallet = new List<string>();
             var trustNodeList = db.TrustNode.ToList();
+            foreach (var trustNode in trustNodeList)
+            {
+                var ipaddressList = trustNode.IPAddressList.Split(",");
+                foreach (var ipaddress in ipaddressList)
+                {
+                    if (!string.IsNullOrEmpty(ipaddress))
+                    {
+                        if (trustNodeList.Where(x => x.TrustedIPList.Contains(ipaddress)).Count() > 0)
+                        {
+                            luckTrustedWallet.Add(trustNode.WalletAddress);
+                        }
+                    }
+
+                }
+            }
+            return luckTrustedWallet.Distinct().ToList();
+        }
+
+        public List<string> GetTrustedWalletAddressActive()
+        {
+            List<string> luckTrustedWallet = new List<string>();
+            var trustNodeList = db.ActiveTrustNode.ToList();
             foreach (var trustNode in trustNodeList)
             {
                 var ipaddressList = trustNode.IPAddressList.Split(",");
@@ -48,13 +75,31 @@ namespace ConfluxMiningTool.Models
                 if (trustNodes.Length == 3)
                 {
                     var walletAddress = trustNodes[0];
-                    if (walletAddress == null || walletAddress.Length == 0)
+                    if (walletAddress == null || walletAddress.Length == 0 || walletAddress.Length != 40 || !walletAddress.StartsWith("1"))
                     {
                         return;
                     }
+
                     var ipAddress = trustNodes[1];
                     var trustNodeIPList = trustNodes[2];
                     var trustNode = db.TrustNode.FirstOrDefault(x => x.WalletAddress == walletAddress);
+
+                    #region active trust node
+
+                    var activeTrustNode = db.ActiveTrustNode.FirstOrDefault(x => x.WalletAddress == walletAddress);
+                    if (activeTrustNode != null)
+                    {
+                        db.ActiveTrustNode.Remove(activeTrustNode);
+                    }
+                    db.ActiveTrustNode.Add(new ActiveTrustNode
+                    {
+                        CreatedDate = DateTime.Now,
+                        WalletAddress = walletAddress,
+                        IPAddressList = ipAddress,
+                        TrustedIPList = trustNodeIPList,
+                    });
+                    #endregion
+
                     if (trustNode == null)
                     {
                         db.TrustNode.Add(new TrustNode { WalletAddress = walletAddress, IPAddressList = string.Empty, TrustedIPList = string.Empty, });

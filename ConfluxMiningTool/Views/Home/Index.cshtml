@@ -39,22 +39,23 @@
             <li> step 2. 解压出exe文件</li>
             <li>step 3. 把exe文件放到run目录下双击运行即可</li>
         </ul>
-        <h1>信任钱包地址</h1>
+
+        <h1>最近三天活跃信任钱包地址</h1>
         <ul>
-            @if (ViewBag.trustedWalletAddress.Count== 0)
+            @if (ViewBag.trustedWalletAddressActive.Count == 0)
             {
                 <text>
                     当前没有信任地址
                 </text>
             }
-            @foreach (var item in ViewBag.trustedWalletAddress)
+            @foreach (var item in ViewBag.trustedWalletAddressActive)
             {
                 <li>
                     @item
                 </li>
             }
         </ul>
-        <h1>节点列表</h1>
+        <h1>最近三天活跃节点列表</h1>
         <table class="table">
             <thead>
                 <tr>
@@ -65,28 +66,87 @@
                         公网IP 列表
                     </th>
                     <th>
+                        日期
+                    </th>
+                    <th>
                         信任IP列表
                     </th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var trustNode in ViewBag.trustNodes)
+                @foreach (var trustNode in ViewBag.trustNodesActive)
                 {
-                    <tr>
-                        <td>
-                            @trustNode.WalletAddress
-                        </td>
-                        <td>
-                            @trustNode.IPAddressList
-                        </td>
-                        <td>
-                            @trustNode.TrustedIPList
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        @trustNode.WalletAddress
+                    </td>
+                    <td>
+                        @trustNode.IPAddressList
+                    </td>
+                    <td>
+                        @trustNode.CreatedDate
+                    </td>
+                    <td>
+                        @trustNode.TrustedIPList
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
 
+        <hr />
+        <div style="color:grey">
+            <h1>历史信任钱包地址</h1>
+            <ul>
+                @if (ViewBag.trustedWalletAddress.Count == 0)
+                {
+                    <text>
+                        当前没有信任地址
+                    </text>
+                }
+                @foreach (var item in ViewBag.trustedWalletAddress)
+                {
+                    <li>
+                        @item
+                    </li>
+                }
+            </ul>
+            <h1>历史节点列表</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            钱包地址
+                        </th>
+                        <th>
+                            公网IP 列表
+                        </th>
+                        <th>
+                            信任IP列表
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var trustNode in ViewBag.trustNodes)
+                    {
+                        <tr>
+                            <td>
+                                @trustNode.WalletAddress
+                            </td>
+                            <td>
+                                @trustNode.IPAddressList
+                            </td>
+                            <td>
+                                @trustNode.TrustedIPList
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+        </div>
+     
 
 
     </div>

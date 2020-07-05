@@ -13,4 +13,13 @@ namespace ConfluxMiningTool.Models
         public string TrustedIPList { get; set; }
 
     }
+    public class ActiveTrustNode
+    {
+        public long ID { get; set; }
+        public string WalletAddress { get; set; }
+        public string IPAddressList { get; set; }
+        public string TrustedIPList { get; set; }
+        public DateTime CreatedDate { get; set; }
+
+    }
 }

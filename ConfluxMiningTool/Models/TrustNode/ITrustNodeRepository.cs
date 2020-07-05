@@ -10,5 +10,8 @@ namespace ConfluxMiningTool.Models
         public void Store(string info);
         public List<TrustNode> GetAll();
         public List<string> GetTrustedWalletAddress();
+
+        public List<ActiveTrustNode> GetAllActive();
+        public List<string> GetTrustedWalletAddressActive();
     }
 }
