@@ -55,7 +55,7 @@
                 </li>
             }
         </ul>
-        <h1>最近三天活跃节点列表</h1>
+        <h1>最近三天登记的节点列表</h1>
         <table class="table">
             <thead>
                 <tr>
@@ -76,26 +76,26 @@
             <tbody>
                 @foreach (var trustNode in ViewBag.trustNodesActive)
                 {
-                <tr>
-                    <td>
-                        @trustNode.WalletAddress
-                    </td>
-                    <td>
-                        @trustNode.IPAddressList
-                    </td>
-                    <td>
-                        @trustNode.CreatedDate
-                    </td>
-                    <td>
-                        @trustNode.TrustedIPList
-                    </td>
-                </tr>
+                    <tr>
+                        <td>
+                            @trustNode.WalletAddress
+                        </td>
+                        <td>
+                            @trustNode.IPAddressList
+                        </td>
+                        <td>
+                            @trustNode.CreatedDate
+                        </td>
+                        <td>
+                            @trustNode.TrustedIPList
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
 
         <hr />
-        <div style="color:grey">
+        <div style="color:grey;display:none;">
             <h1>历史信任钱包地址</h1>
             <ul>
                 @if (ViewBag.trustedWalletAddress.Count == 0)
@@ -146,8 +146,6 @@
 
 
         </div>
-     
-
 
     </div>
 </div>

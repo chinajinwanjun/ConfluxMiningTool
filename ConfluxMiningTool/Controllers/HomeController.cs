@@ -43,6 +43,11 @@ namespace ConfluxMiningTool.Controllers
         {
             return Json(_balanceHistory.GetChartByAddress(address));
         }
+        [HttpGet]
+        public JsonResult GetTrustedNodeList()
+        {
+            return Json(trustNodeRepository.GetTrustedWalletAddress());
+        }
         public IActionResult Register()
         {
             return View();
@@ -63,10 +68,11 @@ namespace ConfluxMiningTool.Controllers
         }
         public JsonResult StoreTrustNode(string info)
         {
-            this.trustNodeRepository.Store(info);
+            string remoteIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            if (Request.Headers.ContainsKey("X-Forwarded-For"))
+                remoteIpAddress = Request.Headers["X-Forwarded-For"];
+            this.trustNodeRepository.Store(info, remoteIpAddress);
             return Json(1);
         }
-
-
     }
 }
