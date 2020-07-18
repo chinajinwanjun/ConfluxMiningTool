@@ -16,18 +16,23 @@ namespace ConfluxMiningTool
         private readonly IBalanceHistoryRepository balanceHistory;
         private readonly IAccountRepository accountRepository;
         private readonly IConfiguration configuration;
-        public HangFire(IBalanceHistoryRepository balanceHistory,IAccountRepository accountRepository, IConfiguration configuration)
+        private readonly ITrustNodeRepository trustNodeRepository;
+        private readonly IDailyTrustedNodeRepository  dailyTrustedNodeRepository;
+        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, ITrustNodeRepository trustNodeRepository,IDailyTrustedNodeRepository dailyTrustedNodeRepository ,IConfiguration configuration)
         {
             this.balanceHistory = balanceHistory;
             this.accountRepository = accountRepository;
+            this.trustNodeRepository = trustNodeRepository;
             this.configuration = configuration;
+            dailyTrustedNodeRepository = dailyTrustedNodeRepository;
         }
         public HangFire()
         {
         }
         public void AddJob()
         {
-            RecurringJob.AddOrUpdate(() => WriteMiningData(),  "0 * * * *");
+            RecurringJob.AddOrUpdate(() => WriteMiningData(), "0 * * * *");
+            RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *");
         }
 
         public void WriteMiningData()
@@ -35,7 +40,7 @@ namespace ConfluxMiningTool
             foreach (var account in accountRepository.GetAccounts())
             {
                 var balance = GetBalanceByAddress(account.Address);
-                if (balance>1)
+                if (balance > 1)
                 {
                     balanceHistory.Add(new BalanceHistory
                     {
@@ -44,7 +49,7 @@ namespace ConfluxMiningTool
                         CreatedTime = DateTime.Now,
                     });
                 }
-           
+
             }
         }
         public double GetBalanceByAddress(string address)
@@ -59,8 +64,13 @@ namespace ConfluxMiningTool
             {
                 return -1;
             }
-
         }
 
+        public void WriteDailyTrustNode()
+        {
+            //get today trusted node list
+            var walletList = trustNodeRepository.GetTodayTrustedWalletAddressActive();
+            dailyTrustedNodeRepository.Save(walletList);
+        }
     }
 }

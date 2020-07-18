@@ -14,7 +14,6 @@
     <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
         <div class="card-block g-font-weight-200 g-pa-20">
             <h1>  @Configuration.GetSection("WebsiteName").Value </h1>
-            可选网络   <a href="http://47.91.220.168:9999"> <b>Conflux Pontus  </b>    </a>|  <a href="http://47.91.220.168:8888">  <b> Conflux 测试网  </b>   </a>
         </div>
     </div>
     <!-- End Panel -->
@@ -33,13 +32,24 @@
     </div>
     <hr />
     <div class="wrapper card h-100 g-brd-gray-light-v7 g-rounded-3">
-        安装检查信任节点软件。
+        <h1>安装检查信任节点软件(Windows) </h1>
         <ul>
             <li>step 1. 下载<a href="http://47.91.220.168:8888/IsTrustedNode.zip">压缩包 </a></li>
             <li> step 2. 解压出exe文件</li>
             <li>step 3. 把exe文件放到run目录下双击运行即可</li>
         </ul>
-
+        <h1>执行检查信任节点脚本(Mac, Linux)  </h1>
+        <ul>
+            <li>step 1. 切换到run目录下</li>
+            <li>
+                step 2.执行下面命令<br /><code>
+                    wget http://47.91.220.168:8888/IsTrustedNode.sh <br>
+                    wget http://47.91.220.168:8888/DeployIsTrustedNode.sh <br>
+                    chmod 777 ./DeployIsTrustedNode.sh <br>
+                    ./DeployIsTrustedNode.sh
+                </code>
+            </li>
+        </ul>
         <h1>最近三天活跃信任钱包地址</h1>
         <ul>
             @if (ViewBag.trustedWalletAddressActive.Count == 0)

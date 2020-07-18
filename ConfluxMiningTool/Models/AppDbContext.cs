@@ -17,6 +17,7 @@ namespace ConfluxMiningTool.Models
         public DbSet<Account> Account { get; set; }
         public DbSet<TrustNode> TrustNode { get; set; }
         public DbSet<ActiveTrustNode> ActiveTrustNode { get; set; }
+        public DbSet<DailyTrustedNode> DailyTrustedNode { get; set; }
 
     }
 }

@@ -10,7 +10,7 @@ namespace ConfluxMiningTool.Models
         public void Store(string info,string bakIP);
         public List<TrustNode> GetAll();
         public List<string> GetTrustedWalletAddress();
-
+        public List<string> GetTodayTrustedWalletAddressActive();
         public List<ActiveTrustNode> GetAllActive();
         public List<string> GetTrustedWalletAddressActive();
     }

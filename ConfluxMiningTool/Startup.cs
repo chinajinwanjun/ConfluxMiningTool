@@ -35,6 +35,7 @@ namespace ConfluxMiningTool
             services.AddTransient<IBalanceHistoryRepository, BalanceHistoryRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<ITrustNodeRepository, TrustNodeRepository>();
+            services.AddTransient<IDailyTrustedNodeRepository, DailyTrustedNodeRepository>();
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
