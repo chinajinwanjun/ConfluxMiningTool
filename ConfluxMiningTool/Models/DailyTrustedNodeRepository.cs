@@ -18,7 +18,7 @@ namespace ConfluxMiningTool.Models
             List<DailyTrustedNode> dailyTrustedNodes = new List<DailyTrustedNode>();
             foreach (var wallet in wallletList)
             {
-                dailyTrustedNodes.Add(new DailyTrustedNode { CreatedTime = DateTime.Now, WalletAddress = wallet });
+                dailyTrustedNodes.Add(new DailyTrustedNode { CreatedDate = DateTime.Now, WalletAddress = wallet });
             }
             db.DailyTrustedNode.AddRange(dailyTrustedNodes);
             db.SaveChanges();

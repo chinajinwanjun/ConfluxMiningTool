@@ -9,6 +9,6 @@ namespace ConfluxMiningTool.Models
     {
         public long ID { get; set; }
         public string WalletAddress { get; set; }
-        public DateTime CreatedTime { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

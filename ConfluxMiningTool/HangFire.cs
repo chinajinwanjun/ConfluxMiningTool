@@ -17,14 +17,14 @@ namespace ConfluxMiningTool
         private readonly IAccountRepository accountRepository;
         private readonly IConfiguration configuration;
         private readonly ITrustNodeRepository trustNodeRepository;
-        private readonly IDailyTrustedNodeRepository  dailyTrustedNodeRepository;
-        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, ITrustNodeRepository trustNodeRepository,IDailyTrustedNodeRepository dailyTrustedNodeRepository ,IConfiguration configuration)
+        private readonly IDailyTrustedNodeRepository dailyTrustedNodeRepository;
+        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, ITrustNodeRepository trustNodeRepository, IDailyTrustedNodeRepository dailyTrustedNodeRepository, IConfiguration configuration)
         {
             this.balanceHistory = balanceHistory;
             this.accountRepository = accountRepository;
             this.trustNodeRepository = trustNodeRepository;
             this.configuration = configuration;
-            dailyTrustedNodeRepository = dailyTrustedNodeRepository;
+            this.dailyTrustedNodeRepository = dailyTrustedNodeRepository;
         }
         public HangFire()
         {

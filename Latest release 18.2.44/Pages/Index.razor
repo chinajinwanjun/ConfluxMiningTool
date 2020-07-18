@@ -1,0 +1,82 @@
+﻿@page "/111"
+
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+@using Latest_release_18._2._44.Data
+@inject StudentService StudentService
+<Component></Component>
+<SfGrid DataSource="@studentList" AllowPaging="true" Toolbar="@(new List<string>() { "Add", "Edit", "Delete" })"
+        AllowFiltering="true" AllowSorting="true">
+    <GridEvents OnActionBegin="ActionBeginHandler" TValue="Student"></GridEvents>
+    <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true" Mode="@EditMode.Dialog">
+        <Template>
+            @{
+                var s = (context as Student);
+                <div>
+                    <div class="form-row">
+                        @if (s.ID != 0)
+                        {
+                            <div class="form-group col-md-6">
+                                <label class="e-float-text e-label-top">Order ID</label>
+                                <SfNumericTextBox ID="OrderID" @bind-Value="@(s.ID)" Enabled="@((s.ID == null) ? true : false)"></SfNumericTextBox>
+                            </div>
+                        }
+
+                        <div class="form-group col-md-6">
+                            <label class="e-float-text e-label-top">Customer Name</label>
+                            <SfTextBox ID="customerID" @bind-Value="@(s.Name)">
+                            </SfTextBox>
+                        </div>
+                    </div>
+                </div>
+            }
+        </Template>
+    </GridEditSettings>
+    <GridColumns>
+        <GridColumn Field="@nameof(Student.ID)" IsPrimaryKey="true"></GridColumn>
+        <GridColumn Field="@nameof(Student.Name)"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+
+
+@code{
+   
+    public void ActionBeginHandler(ActionEventArgs<Student> args)
+    {
+        if (args.RequestType.ToString().ToLower() == "save")
+        {
+            if (args.Action.ToLower() == "add")
+            {
+                StudentService.Add(args.Data as Student);
+            }
+            else if (args.Action.ToLower() == "edit")
+            {
+                StudentService.Update(args.Data as Student);
+            }
+        }
+        else if (args.RequestType.ToString().ToLower() == "delete")
+        {
+            StudentService.Delete(args.Data as Student);
+        }
+    }
+    private List<Student> studentList;
+    protected async override Task OnInitializedAsync()
+    {
+        studentList = StudentService.GetStudent();
+        base.OnInitialized();
+    }
+}
+<style>
+    .form-group.col-md-6 {
+        width: 200px;
+    }
+
+    label.e-float-text {
+        position: relative;
+        padding-left: 0;
+        top: 10%;
+    }
+</style>

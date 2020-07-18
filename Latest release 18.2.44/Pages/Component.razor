@@ -1,0 +1,28 @@
+﻿@page "/"
+@using Syncfusion.Blazor.PivotView
+@using  Latest_release_18._2._44.Data
+@inject DailyTrustNodeService DailyTrustNodeService
+<SfPivotView TValue="DailyTrustedNodeDto" Height="1000">
+    <PivotViewDataSourceSettings DataSource="@dataSource">
+        <PivotViewColumns>
+            <PivotViewColumn Name="CreatedDate"></PivotViewColumn>
+        </PivotViewColumns>
+        <PivotViewRows>
+            <PivotViewRow Name="WalletAddress"></PivotViewRow>
+        </PivotViewRows>
+        <PivotViewValues>
+            <PivotViewValue Name="Value"></PivotViewValue>
+        </PivotViewValues>
+
+    </PivotViewDataSourceSettings>
+</SfPivotView>
+
+@code{
+    public List<DailyTrustedNodeDto> dataSource { get; set; }
+    protected override void OnInitialized()
+    {
+        this.dataSource = DailyTrustNodeService.Get30DayPivotDataSource();
+    }
+
+
+}
