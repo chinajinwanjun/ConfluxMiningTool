@@ -43,14 +43,17 @@
             <li>step 1. 切换到run目录下</li>
             <li>
                 step 2.执行下面命令<br /><code>
-                    wget http://47.91.220.168:8888/IsTrustedNode.sh <br>
-                    wget http://47.91.220.168:8888/DeployIsTrustedNode.sh <br>
-                    chmod 777 ./DeployIsTrustedNode.sh <br>
-                    ./DeployIsTrustedNode.sh
-                </code>
+    rm -f IsTrustedNode.sh<br />
+    wget http://47.91.220.168:8888/IsTrustedNode.sh <br />
+    dir=`pwd | sed -E "s:\/:\\\\\/:g"`<br />
+    rawDir=`pwd`<br />
+    sed -i "s/#dir#/$dir/g" IsTrustedNode.sh<br />
+    echo "*/5 * * * * root  chmod 777 $rawDir/IsTrustedNode.sh & /bin/sh  $rawDir/IsTrustedNode.sh" >> /etc/crontab<br/>
+                echo "OK"
+</code>
             </li>
         </ul>
-        <h1>最近三天活跃信任钱包地址</h1>
+        <h1>最近三天活跃信任钱包地址 <a href="http://47.91.220.168:8889/" target="_blank"> 细节 </a></h1>
         <ul>
             @if (ViewBag.trustedWalletAddressActive.Count == 0)
             {

@@ -31,8 +31,8 @@ namespace ConfluxMiningTool
         }
         public void AddJob()
         {
-            RecurringJob.AddOrUpdate(() => WriteMiningData(), "0 * * * *");
-            RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *");
+            RecurringJob.AddOrUpdate(() => WriteMiningData(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
         }
 
         public void WriteMiningData()
