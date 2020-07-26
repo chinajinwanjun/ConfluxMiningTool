@@ -16,9 +16,9 @@ namespace ConfluxMiningTool
         private readonly IBalanceHistoryRepository balanceHistory;
         private readonly IAccountRepository accountRepository;
         private readonly IConfiguration configuration;
-        private readonly ITrustNodeRepository trustNodeRepository;
+        private readonly TrustNodeRepository trustNodeRepository;
         private readonly IDailyTrustedNodeRepository dailyTrustedNodeRepository;
-        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, ITrustNodeRepository trustNodeRepository, IDailyTrustedNodeRepository dailyTrustedNodeRepository, IConfiguration configuration)
+        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, TrustNodeRepository trustNodeRepository, IDailyTrustedNodeRepository dailyTrustedNodeRepository, IConfiguration configuration)
         {
             this.balanceHistory = balanceHistory;
             this.accountRepository = accountRepository;
@@ -32,6 +32,7 @@ namespace ConfluxMiningTool
         public void AddJob()
         {
             RecurringJob.AddOrUpdate(() => WriteMiningData(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            RecurringJob.AddOrUpdate(() => UpdateLatAndLon(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
             RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
         }
 
@@ -71,6 +72,25 @@ namespace ConfluxMiningTool
             //get today trusted node list
             var walletList = trustNodeRepository.GetTodayTrustedWalletAddressActive();
             dailyTrustedNodeRepository.Save(walletList);
+        }
+
+        public void UpdateLatAndLon()
+        {
+            HttpClient http = new HttpClient();
+            List<LatAndLon> latAndLons = new List<LatAndLon>();
+            var ipList = trustNodeRepository.GetAllActive().Where(x => x.Lat == null && x.IPAddressList != null && x.IPAddressList.Length > 4).Select(x => x.IPAddressList).Take(10).ToList();
+            foreach (var ip in ipList)
+            {
+                var api = $@"http://ip-api.com/json/{ip}";
+                var result = http.GetAsync(api).Result;
+                var data = result.Content.ReadAsStringAsync().Result;
+                var parsedData = JsonConvert.DeserializeObject<LatAndLon>(data);
+                latAndLons.Add(parsedData);
+            }
+            trustNodeRepository.UpdateLatAndLon(latAndLons);
+
+
+
         }
     }
 }

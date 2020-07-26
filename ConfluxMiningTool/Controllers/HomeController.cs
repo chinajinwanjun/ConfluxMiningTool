@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ConfluxMiningTool.Models;
+using System.Net.Http;
+using Newtonsoft.Json;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace ConfluxMiningTool.Controllers
 {
@@ -15,8 +19,8 @@ namespace ConfluxMiningTool.Controllers
 
         private readonly IBalanceHistoryRepository _balanceHistory;
         private readonly IAccountRepository accountRepository;
-        private readonly ITrustNodeRepository trustNodeRepository;
-        public HomeController(ILogger<HomeController> logger, IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, ITrustNodeRepository trustNodeRepository)
+        private readonly TrustNodeRepository trustNodeRepository;
+        public HomeController(ILogger<HomeController> logger, IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, TrustNodeRepository trustNodeRepository)
         {
             _logger = logger;
             this.accountRepository = accountRepository;
@@ -35,7 +39,7 @@ namespace ConfluxMiningTool.Controllers
         }
         public IActionResult TrustedNode()
         {
-         
+
             return View();
         }
         [HttpGet]
@@ -48,9 +52,45 @@ namespace ConfluxMiningTool.Controllers
         {
             return Json(trustNodeRepository.GetTrustedWalletAddress());
         }
+        [HttpGet]
+        public JsonResult GetNodeIPAndLocation()
+        {
+            return Json(trustNodeRepository.GetNodeIPAndLocation());
+        }
         public IActionResult Register()
         {
             return View();
+        }
+        [HttpGet]
+        public JsonResult Test()
+        {
+            try
+            {
+
+                {
+                    HttpClient http = new HttpClient();
+                    List<LatAndLon> latAndLons = new List<LatAndLon>();
+                    var ipList = trustNodeRepository.GetAllActive().Where(x => x.Lat == null && x.IPAddressList != null && x.IPAddressList.Length > 4).Select(x => x.IPAddressList).Take(10).ToList();
+                    foreach (var ip in ipList)
+                    {
+                        var api = $@"http://ip-api.com/json/{ip}";
+                        var result = http.GetAsync(api).Result;
+                        var data = result.Content.ReadAsStringAsync().Result;
+                        var parsedData = JsonConvert.DeserializeObject<LatAndLon>(data);
+                        latAndLons.Add(parsedData);
+                    }
+                    trustNodeRepository.UpdateLatAndLon(latAndLons);
+
+
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Json(0);
         }
         [HttpPost]
         public JsonResult AddAccount(Account account)

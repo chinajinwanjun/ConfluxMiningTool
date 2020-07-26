@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace ConfluxMiningTool.Models
@@ -13,5 +14,8 @@ namespace ConfluxMiningTool.Models
         public List<string> GetTodayTrustedWalletAddressActive();
         public List<ActiveTrustNode> GetAllActive();
         public List<string> GetTrustedWalletAddressActive();
+        public void UpdateLatAndLon();
+        public List<NodeIPAndLocation> GetNodeIPAndLocation();
+        public AppDbContext GetDb() ;
     }
 }

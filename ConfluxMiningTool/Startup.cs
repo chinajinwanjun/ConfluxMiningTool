@@ -28,18 +28,19 @@ namespace ConfluxMiningTool
         public void ConfigureServices(IServiceCollection services)
         {
 
-
+          
             services.AddHangfire(r => r.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<IBalanceHistoryRepository, BalanceHistoryRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
-            services.AddTransient<ITrustNodeRepository, TrustNodeRepository>();
+            services.AddScoped<TrustNodeRepository>();
             services.AddTransient<IDailyTrustedNodeRepository, DailyTrustedNodeRepository>();
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
+      
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
