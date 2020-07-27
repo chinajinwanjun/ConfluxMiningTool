@@ -9,7 +9,7 @@ namespace ConfluxMiningTool.Models
 {
     public class LatAndLon
     {
-        public string query  { get; set; }
+        public string query { get; set; }
         public string lat { get; set; }
         public string lon { get; set; }
     }
@@ -17,7 +17,7 @@ namespace ConfluxMiningTool.Models
     {
         public AppDbContext db;
 
-        public TrustNodeRepository(AppDbContext db )
+        public TrustNodeRepository(AppDbContext db)
         {
             this.db = db;
         }
@@ -127,8 +127,16 @@ namespace ConfluxMiningTool.Models
                     #region active trust node
 
                     var activeTrustNode = db.ActiveTrustNode.FirstOrDefault(x => x.WalletAddress == walletAddress);
+                    var lat = "";
+                    var lon = "";
+                    var ip = activeTrustNode.IPAddressList;
                     if (activeTrustNode != null)
                     {
+                        if (ipAddress == ip)
+                        {
+                            lat = activeTrustNode.Lat;
+                            lon = activeTrustNode.Lon;
+                        }
                         db.ActiveTrustNode.Remove(activeTrustNode);
                     }
                     db.ActiveTrustNode.Add(new ActiveTrustNode
@@ -137,6 +145,8 @@ namespace ConfluxMiningTool.Models
                         WalletAddress = walletAddress,
                         IPAddressList = ipAddress,
                         TrustedIPList = trustNodeIPList,
+                        Lat = lat,
+                        Lon = lon,
                     });
                     #endregion
 
@@ -169,8 +179,8 @@ namespace ConfluxMiningTool.Models
         {
             foreach (var latAndLon in latAndLons)
             {
-                var obj= db.ActiveTrustNode.FirstOrDefault(x => x.IPAddressList == latAndLon.query);
-                if (obj!=null)
+                var obj = db.ActiveTrustNode.FirstOrDefault(x => x.IPAddressList == latAndLon.query);
+                if (obj != null)
                 {
                     obj.Lat = latAndLon.lat;
                     obj.Lon = latAndLon.lon;
