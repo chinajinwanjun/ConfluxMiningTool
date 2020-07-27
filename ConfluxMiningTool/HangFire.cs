@@ -81,7 +81,7 @@ namespace ConfluxMiningTool
             var ipList = trustNodeRepository.GetAllActive().Where(x => x.Lat == null && x.IPAddressList != null && x.IPAddressList.Length > 4).Select(x => x.IPAddressList).Take(10).ToList();
             foreach (var ip in ipList)
             {
-                var api = $@"http://ip-api.com/json/{ip}";
+                var api = $@"http://api.ipstack.com/{ip}?access_key=60f430bcae98649b74acb1bc34f1a8a5";
                 var result = http.GetAsync(api).Result;
                 var data = result.Content.ReadAsStringAsync().Result;
                 var parsedData = JsonConvert.DeserializeObject<LatAndLon>(data);

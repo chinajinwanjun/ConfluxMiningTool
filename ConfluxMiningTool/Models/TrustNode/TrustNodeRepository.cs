@@ -9,9 +9,9 @@ namespace ConfluxMiningTool.Models
 {
     public class LatAndLon
     {
-        public string query { get; set; }
-        public string lat { get; set; }
-        public string lon { get; set; }
+        public string ip { get; set; }
+        public string latitude { get; set; }
+        public string longitude { get; set; }
     }
     public class TrustNodeRepository
     {
@@ -179,11 +179,11 @@ namespace ConfluxMiningTool.Models
         {
             foreach (var latAndLon in latAndLons)
             {
-                var obj = db.ActiveTrustNode.FirstOrDefault(x => x.IPAddressList == latAndLon.query);
-                if (obj != null)
+                var obj = db.ActiveTrustNode.FirstOrDefault(x => x.IPAddressList == latAndLon.ip);
+                if (obj != null && latAndLon.latitude.Length > 4)
                 {
-                    obj.Lat = latAndLon.lat;
-                    obj.Lon = latAndLon.lon;
+                    obj.Lat = latAndLon.latitude;
+                    obj.Lon = latAndLon.longitude;
                 }
             }
             db.SaveChanges();
