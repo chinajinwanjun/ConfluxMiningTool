@@ -32,7 +32,16 @@ namespace ConfluxMiningTool.Models
         public List<ActiveTrustNode> GetAllActive()
         {
             var threeDaysAgo = DateTime.Now.AddDays(-3);
-            return db.ActiveTrustNode.Where(x => x.CreatedDate >= threeDaysAgo).ToList();
+            var tmp = new List<ActiveTrustNode>();
+            try
+            {
+                tmp = db.ActiveTrustNode.Where(x => x.CreatedDate >= threeDaysAgo).ToList();
+            }
+            catch (Exception)
+            {
+     
+            }
+            return tmp;
         }
         public List<string> GetTrustedWalletAddress()
         {
@@ -129,9 +138,10 @@ namespace ConfluxMiningTool.Models
                     var activeTrustNode = db.ActiveTrustNode.FirstOrDefault(x => x.WalletAddress == walletAddress);
                     var lat = "";
                     var lon = "";
-                    var ip = activeTrustNode.IPAddressList;
+                    var ip = activeTrustNode == null ? "" : activeTrustNode.IPAddressList;
                     if (activeTrustNode != null)
                     {
+
                         if (ipAddress == ip)
                         {
                             lat = activeTrustNode.Lat;

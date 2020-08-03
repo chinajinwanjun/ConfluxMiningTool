@@ -30,11 +30,19 @@ namespace ConfluxMiningTool.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.trustNodes = trustNodeRepository.GetAll();
-            ViewBag.trustedWalletAddress = trustNodeRepository.GetTrustedWalletAddress();
+            try
+            {
+                ViewBag.trustNodes = trustNodeRepository.GetAll();
+                ViewBag.trustedWalletAddress = trustNodeRepository.GetTrustedWalletAddress();
 
-            ViewBag.trustNodesActive = trustNodeRepository.GetAllActive();
-            ViewBag.trustedWalletAddressActive = trustNodeRepository.GetTrustedWalletAddressActive();
+                ViewBag.trustNodesActive = trustNodeRepository.GetAllActive();
+                ViewBag.trustedWalletAddressActive = trustNodeRepository.GetTrustedWalletAddressActive();
+            }
+            catch (Exception)
+            {
+                Redirect("/");
+            }
+
             return View();
         }
         public IActionResult TrustedNode()
