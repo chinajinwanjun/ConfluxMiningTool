@@ -89,17 +89,20 @@
         }
 
         <ul>
-            @if (ViewBag.trustedWalletAddressActive.Count == 0)
+            @if (ViewBag.trustedWalletAddressActive != null)
             {
-                <text>
-                    当前没有信任地址
-                </text>
-            }
-            @foreach (var item in ViewBag.trustedWalletAddressActive)
-            {
-                <li>
-                    @item
-                </li>
+                @if (ViewBag.trustedWalletAddressActive.Count == 0)
+                {
+                    <text>
+                        当前没有信任地址
+                    </text>
+                }
+                @foreach (var item in ViewBag.trustedWalletAddressActive)
+                {
+                    <li>
+                        @item
+                    </li>
+                }
             }
         </ul>
         <h1>最近三天登记的节点列表</h1>
@@ -121,22 +124,25 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var trustNode in ViewBag.trustNodesActive)
+                @if (ViewBag.trustNodesActive != null)
                 {
-                    <tr>
-                        <td>
-                            @trustNode.WalletAddress
-                        </td>
-                        <td>
-                            @trustNode.IPAddressList
-                        </td>
-                        <td>
-                            @trustNode.CreatedDate
-                        </td>
-                        <td>
-                            @trustNode.TrustedIPList
-                        </td>
-                    </tr>
+                    @foreach (var trustNode in ViewBag.trustNodesActive)
+                    {
+                        <tr>
+                            <td>
+                                @trustNode.WalletAddress
+                            </td>
+                            <td>
+                                @trustNode.IPAddressList
+                            </td>
+                            <td>
+                                @trustNode.CreatedDate
+                            </td>
+                            <td>
+                                @trustNode.TrustedIPList
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
@@ -145,18 +151,22 @@
         <div style="color:grey;display:none;">
             <h1>历史信任钱包地址</h1>
             <ul>
-                @if (ViewBag.trustedWalletAddress.Count == 0)
+                @if (ViewBag.trustedWalletAddress != null)
                 {
-                    <text>
-                        当前没有信任地址
-                    </text>
+                    @if (ViewBag.trustedWalletAddress.Count == 0)
+                    {
+                        <text>
+                            当前没有信任地址
+                        </text>
+                    }
+                    @foreach (var item in ViewBag.trustedWalletAddress)
+                    {
+                        <li>
+                            @item
+                        </li>
+                    }
                 }
-                @foreach (var item in ViewBag.trustedWalletAddress)
-                {
-                    <li>
-                        @item
-                    </li>
-                }
+
             </ul>
             <h1>历史节点列表</h1>
             <table class="table">
@@ -174,20 +184,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var trustNode in ViewBag.trustNodes)
+                    @if (ViewBag.trustNodes != null)
                     {
-                        <tr>
-                            <td>
-                                @trustNode.WalletAddress
-                            </td>
-                            <td>
-                                @trustNode.IPAddressList
-                            </td>
-                            <td>
-                                @trustNode.TrustedIPList
-                            </td>
-                        </tr>
+                        @foreach (var trustNode in ViewBag.trustNodes)
+                        {
+                            <tr>
+                                <td>
+                                    @trustNode.WalletAddress
+                                </td>
+                                <td>
+                                    @trustNode.IPAddressList
+                                </td>
+                                <td>
+                                    @trustNode.TrustedIPList
+                                </td>
+                            </tr>
+                        }
                     }
+
                 </tbody>
             </table>
 
@@ -281,7 +295,7 @@
 
     setInterval(function () {
         location.reload();
-    }, 60000);
+    }, 600000);
     console.log(data, 64, generateData())
     var options = {
         legend: false,
