@@ -6,7 +6,7 @@
     <SfChart Title="起源计划投票汇总">
         <ChartEvents Load="ChartLoad" />
         <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
-        <ChartPrimaryXAxis LabelFormat="y"    Minimum="0" ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="100" EdgeLabelPlacement="EdgeLabelPlacement.Shift">
+        <ChartPrimaryXAxis LabelFormat="y" ValueType="Syncfusion.Blazor.Charts.ValueType.Category"  EdgeLabelPlacement="EdgeLabelPlacement.Shift">
             <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
         </ChartPrimaryXAxis>
         <ChartPrimaryYAxis LabelFormat="{value}" RangePadding="ChartRangePadding.None">
@@ -82,6 +82,7 @@
                 yValue4 = parsedData.datasets[5].data[index],
             }
                 );
+index++;
         }
     }
     public class Data
