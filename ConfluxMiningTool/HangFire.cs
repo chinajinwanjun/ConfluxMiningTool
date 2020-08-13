@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ConfluxMiningTool
@@ -38,8 +39,51 @@ namespace ConfluxMiningTool
 
         public void WriteMiningData()
         {
+            //team
+            HttpClient http = new HttpClient();
+            var teamAddressList = new List<string> { "0x1C2B0CDE31b96E52cf5236e75e8bbFC0Dac038E5", "0x1a8fbf02d66daafa902885dd958650d6865d4fcc", "0x10933e0d887f62d1f00fc7b93575e89e82cbd640", "0x19b9e817ec206241b3bd71cf2152d9695d2e439b" };
+
+            int usedTotal = 0;
+            foreach (var teamAddress in teamAddressList)
+            {
+                Regex regex = new Regex("\"balance\":\"(\\d+)\"");
+                var str = http.GetAsync($@"http://confluxscan.io/contract-manager/api/account/token/list?address={teamAddress.ToLower()}").Result.Content.ReadAsStringAsync().Result;
+                var balance = regex.Matches(str)[0].Groups[1].ToString();
+                balanceHistory.Add(new BalanceHistory
+                {
+                    Address = teamAddress.ToLower(),
+                    Balance = Convert.ToDouble(balance),
+                    CreatedTime = DateTime.Now,
+                });
+                usedTotal += int.Parse(balance);
+            }
+            // total
+            {
+                Regex regex = new Regex("\"totalSupply\":\"(\\d+)\"");
+                var str = http.GetAsync($@"http://confluxscan.io/api/token/query?address=0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa").Result.Content.ReadAsStringAsync().Result;
+                var balance = regex.Matches(str)[0].Groups[1].ToString();
+                balanceHistory.Add(new BalanceHistory
+                {
+                    Address = "0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa",
+                    Balance = Convert.ToDouble(balance),
+                    CreatedTime = DateTime.Now,
+                });
+                var unusedTotal = int.Parse(balance) - usedTotal;
+                balanceHistory.Add(new BalanceHistory
+                {
+                    Address = "0x8unuseda4e3201b2f7aa720b3754dfa585b4dbfa",
+                    Balance = Convert.ToDouble(unusedTotal),
+                    CreatedTime = DateTime.Now,
+                });
+            }
+
+            //total
             foreach (var account in accountRepository.GetAccounts())
             {
+                if (teamAddressList.Contains(account.Address))
+                {
+                    continue;
+                }
                 var balance = GetBalanceByAddress(account.Address);
                 if (balance > 1)
                 {
