@@ -1,16 +1,124 @@
 ﻿@page "/counter"
-
-<h1>Counter</h1>
-
-<p>Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
-@code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+@using Syncfusion.Blazor.Charts
+@using Newtonsoft.Json
+@inject NavigationManager NavigationManager
+<div class="control-section">
+    <SfChart Title="起源计划投票汇总">
+        <ChartEvents Load="ChartLoad" />
+        <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+        <ChartPrimaryXAxis LabelFormat="y"    Minimum="0" ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="100" EdgeLabelPlacement="EdgeLabelPlacement.Shift">
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis LabelFormat="{value}" RangePadding="ChartRangePadding.None">
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+        </ChartPrimaryYAxis>
+        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+        <ChartSeriesCollection>
+            <ChartSeries DataSource="@ChartData" Name="Total" XName="xValue" Width="2"
+                         Opacity="1" YName="yValueTotal" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="Total Unused" XName="xValue" Width="2"
+                         Opacity="1" YName="yValueUnUsed" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="超侃Real" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue1" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="So DApp" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue2" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="光头说财经" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue3" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="每日财经" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue4" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+    </SfChart>
+</div>
+@code{
+    private string CurrentUri;
+    public class LineChartData
     {
-        currentCount++;
+        public string xValue { get; set; }
+        public double yValueTotal { get; set; }
+        public double yValueUnUsed { get; set; }
+        public double yValue1 { get; set; }
+        public double yValue2 { get; set; }
+        public double yValue3 { get; set; }
+        public double yValue4 { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        HttpClient http = new HttpClient();
+        var result = http.GetAsync("http://47.91.220.168:8888/home/GetChartByAddress?address=0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa,0x8unuseda4e3201b2f7aa720b3754dfa585b4dbfa,0x1c2b0cde31b96e52cf5236e75e8bbfc0dac038e5,0x1a8fbf02d66daafa902885dd958650d6865d4fcc,0x10933e0d887f62d1f00fc7b93575e89e82cbd640,0x19b9e817ec206241b3bd71cf2152d9695d2e439b").Result;
+        var data = result.Content.ReadAsStringAsync().Result;
+        var parsedData = JsonConvert.DeserializeObject<MisedData>(data);
+        var index = 0;
+        foreach (var label in parsedData.labels)
+        {
+            ChartData.Add(
+            new LineChartData
+            {
+                xValue = label,
+                yValueTotal = parsedData.datasets[0].data[index],
+                yValueUnUsed = parsedData.datasets[1].data[index],
+                yValue1 = parsedData.datasets[2].data[index],
+                yValue2 = parsedData.datasets[3].data[index],
+                yValue3 = parsedData.datasets[4].data[index],
+                yValue4 = parsedData.datasets[5].data[index],
+            }
+                );
+        }
+    }
+    public class Data
+    {
+        public int[] data { get; set; }
+    }
+    public class MisedData
+    {
+        public List<Data> datasets { get; set; }
+        public string[] labels { get; set; }
+    }
+    public List<LineChartData> ChartData = new List<LineChartData>
+    {
+        //    new LineChartData { xValue = new DateTime(2005, 01, 01), yValue = 21, yValue1 = 28 },
+    };
+    void ChartLoad(ILoadedEventArgs Args)
+    {
+        CurrentUri = NavigationManager.Uri;
+        if (CurrentUri.IndexOf("material") > -1)
+        {
+            Args.Theme = ChartTheme.Material;
+        }
+        else if (CurrentUri.IndexOf("fabric") > -1)
+        {
+            Args.Theme = ChartTheme.Fabric;
+        }
+        else if (CurrentUri.IndexOf("bootstrap") > -1)
+        {
+            Args.Theme = ChartTheme.Bootstrap;
+        }
+        else if (CurrentUri.IndexOf("highcontrast") > -1)
+        {
+            Args.Theme = ChartTheme.HighContrast;
+        }
+        else
+        {
+            Args.Theme = ChartTheme.Bootstrap4;
+        }
     }
 }
