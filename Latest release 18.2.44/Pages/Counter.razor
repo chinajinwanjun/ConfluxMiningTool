@@ -2,53 +2,58 @@
 @using Syncfusion.Blazor.Charts
 @using Newtonsoft.Json
 @inject NavigationManager NavigationManager
-<div class="control-section">
-    <SfChart Title="起源计划投票汇总">
-        <ChartEvents Load="ChartLoad" />
-        <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
-        <ChartPrimaryXAxis LabelFormat="y" ValueType="Syncfusion.Blazor.Charts.ValueType.Category"  EdgeLabelPlacement="EdgeLabelPlacement.Shift">
-            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
-        </ChartPrimaryXAxis>
-        <ChartPrimaryYAxis LabelFormat="{value}" RangePadding="ChartRangePadding.None">
-            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
-            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
-        </ChartPrimaryYAxis>
-        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
-        <ChartSeriesCollection>
-            <ChartSeries DataSource="@ChartData" Name="Total" XName="xValue" Width="2"
-                         Opacity="1" YName="yValueTotal" Type="ChartSeriesType.Line">
-                <ChartMarker Visible="true" Width="10" Height="10">
-                </ChartMarker>
-            </ChartSeries>
-            <ChartSeries DataSource="@ChartData" Name="Total Unused" XName="xValue" Width="2"
-                         Opacity="1" YName="yValueUnUsed" Type="ChartSeriesType.Line">
-                <ChartMarker Visible="true" Width="10" Height="10">
-                </ChartMarker>
-            </ChartSeries>
-            <ChartSeries DataSource="@ChartData" Name="超侃Real" XName="xValue" Width="2"
-                         Opacity="1" YName="yValue1" Type="ChartSeriesType.Line">
-                <ChartMarker Visible="true" Width="10" Height="10">
-                </ChartMarker>
-            </ChartSeries>
-            <ChartSeries DataSource="@ChartData" Name="So DApp" XName="xValue" Width="2"
-                         Opacity="1" YName="yValue2" Type="ChartSeriesType.Line">
-                <ChartMarker Visible="true" Width="10" Height="10">
-                </ChartMarker>
-            </ChartSeries>
-            <ChartSeries DataSource="@ChartData" Name="光头说财经" XName="xValue" Width="2"
-                         Opacity="1" YName="yValue3" Type="ChartSeriesType.Line">
-                <ChartMarker Visible="true" Width="10" Height="10">
-                </ChartMarker>
-            </ChartSeries>
-            <ChartSeries DataSource="@ChartData" Name="每日财经" XName="xValue" Width="2"
-                         Opacity="1" YName="yValue4" Type="ChartSeriesType.Line">
-                <ChartMarker Visible="true" Width="10" Height="10">
-                </ChartMarker>
-            </ChartSeries>
-        </ChartSeriesCollection>
-    </SfChart>
-</div>
+
+
+    <div class="control-section">
+        <SfChart Title="起源计划投票汇总">
+            <ChartEvents Load="ChartLoad" />
+            <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+            <ChartPrimaryXAxis LabelFormat="y" ValueType="Syncfusion.Blazor.Charts.ValueType.Category" EdgeLabelPlacement="EdgeLabelPlacement.Shift">
+                <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+            </ChartPrimaryXAxis>
+            <ChartPrimaryYAxis LabelFormat="{value}" RangePadding="ChartRangePadding.None">
+                <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            </ChartPrimaryYAxis>
+            <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+            <ChartSeriesCollection>
+                <ChartSeries DataSource="@ChartData" Name="超侃Real" XName="xValue" Width="2"
+                             Opacity="1" YName="yValue1" Type="ChartSeriesType.Line">
+                    <ChartMarker Visible="true" Width="10" Height="10">
+                    </ChartMarker>
+                </ChartSeries>
+                <ChartSeries DataSource="@ChartData" Name="So DApp" XName="xValue" Width="2"
+                             Opacity="1" YName="yValue2" Type="ChartSeriesType.Line">
+                    <ChartMarker Visible="true" Width="10" Height="10">
+                    </ChartMarker>
+                </ChartSeries>
+                <ChartSeries DataSource="@ChartData" Name="光头说财经" XName="xValue" Width="2"
+                             Opacity="1" YName="yValue3" Type="ChartSeriesType.Line">
+                    <ChartMarker Visible="true" Width="10" Height="10">
+                    </ChartMarker>
+                </ChartSeries>
+                <ChartSeries DataSource="@ChartData" Name="每日财经" XName="xValue" Width="2"
+                             Opacity="1" YName="yValue4" Type="ChartSeriesType.Line">
+                    <ChartMarker Visible="true" Width="10" Height="10">
+                    </ChartMarker>
+                </ChartSeries>
+            </ChartSeriesCollection>
+        </SfChart>
+
+        <SfAccumulationChart EnableBorderOnMouseMove="false" Title="@BarTitle" EnableSmartLabels="true">
+            <AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
+            <AccumulationChartTooltipSettings Enable="true" Format=" ${point.y}</b>"></AccumulationChartTooltipSettings>
+            <AccumulationChartSeriesCollection>
+                <AccumulationChartSeries DataSource="@StatisticsDetails" Name="" XName="Country" YName="Users" StartAngle="0" InnerRadius="0%">
+                    <AccumulationDataLabelSettings Name="Text" Visible="true" Position="AccumulationLabelPosition.Outside">
+                        <AccumulationChartConnector Length="20px" Type="ConnectorType.Curve"></AccumulationChartConnector>
+                    </AccumulationDataLabelSettings>
+                </AccumulationChartSeries>
+            </AccumulationChartSeriesCollection>
+        </SfAccumulationChart>
+    </div>
 @code{
+    public string BarTitle = "";
     private string CurrentUri;
     public class LineChartData
     {
@@ -61,12 +66,29 @@
         public double yValue4 { get; set; }
     }
 
+    public class Statistics
+    {
+        public string Country;
+        public double Users;
+        public string Text;
+    }
+    public List<Statistics> StatisticsDetails = new List<Statistics>
+    {
+
+    };
     protected override void OnInitialized()
     {
         HttpClient http = new HttpClient();
         var result = http.GetAsync("http://47.91.220.168:8888/home/GetChartByAddress?address=0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa,0x8unuseda4e3201b2f7aa720b3754dfa585b4dbfa,0x1c2b0cde31b96e52cf5236e75e8bbfc0dac038e5,0x1a8fbf02d66daafa902885dd958650d6865d4fcc,0x10933e0d887f62d1f00fc7b93575e89e82cbd640,0x19b9e817ec206241b3bd71cf2152d9695d2e439b").Result;
         var data = result.Content.ReadAsStringAsync().Result;
         var parsedData = JsonConvert.DeserializeObject<MisedData>(data);
+
+        result = http.GetAsync("http://confluxscan.io/api/token/query?address=0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa").Result;
+        data = result.Content.ReadAsStringAsync().Result;
+
+        var addressTotal= System.Text.RegularExpressions.Regex.Matches(data, "accountTotal\":(\\d+)")[0].Groups[1].Value;
+
+
         var index = 0;
         foreach (var label in parsedData.labels)
         {
@@ -82,8 +104,15 @@
                 yValue4 = parsedData.datasets[5].data[index],
             }
                 );
-index++;
+            index++;
         }
+
+        var total= parsedData.datasets[0].data[parsedData.datasets[0].data.Length - 1];
+        var unused= parsedData.datasets[1].data[parsedData.datasets[0].data.Length - 1];
+        var used = total - unused;
+        StatisticsDetails.Add(new Statistics { Country = "已投票数", Users = used, Text = $@"已投票数: {used}" });
+        StatisticsDetails.Add(new Statistics { Country = "未投票数", Users = unused, Text = $@"未投票数: {unused}" });
+        BarTitle = $@"总票数:{total}, 投票率{(used * 1.0 / total * 100).ToString("##.##")}%,持有人: {addressTotal}地址 ";
     }
     public class Data
     {
