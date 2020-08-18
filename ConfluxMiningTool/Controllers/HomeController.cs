@@ -122,5 +122,11 @@ namespace ConfluxMiningTool.Controllers
             this.trustNodeRepository.Store(info, remoteIpAddress);
             return Json(1);
         }
+        public JsonResult GetBaiduNodeList()
+        {
+            var baiduNodeList = trustNodeRepository.GetBaiduNodeList();
+            object[] formatedObj = new object[] { baiduNodeList };
+            return Json(formatedObj);
+        }
     }
 }

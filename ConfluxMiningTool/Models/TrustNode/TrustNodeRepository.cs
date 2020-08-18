@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace ConfluxMiningTool.Models
 {
+    public class BaiduNode
+    {
+        public decimal[] geoCoord { get; set; }
+    }
     public class LatAndLon
     {
         public string ip { get; set; }
@@ -17,6 +21,18 @@ namespace ConfluxMiningTool.Models
     {
         public AppDbContext db;
 
+        public List<BaiduNode> GetBaiduNodeList()
+        {
+            List<BaiduNode> baiduNodes = new List<BaiduNode>();
+            var MapIPNodes = db.MapIPNode.ToList();
+            foreach (var MapIPNode in MapIPNodes)
+            {
+                baiduNodes.Add(
+                new BaiduNode { geoCoord = new decimal[] { Convert.ToDecimal(MapIPNode.Lat), Convert.ToDecimal(MapIPNode.Lon) } }
+                    );
+            }
+            return baiduNodes;
+        }
         public TrustNodeRepository(AppDbContext db)
         {
             this.db = db;
@@ -24,6 +40,24 @@ namespace ConfluxMiningTool.Models
         public AppDbContext GetDb()
         {
             return db;
+        }
+        public List<string> GetMapIPList()
+        {
+            return db.MapIPNode.Select(x => x.IP).ToList();
+        }
+        public void StoreMapNode(LatAndLon LatAndLon)
+        {
+            if (GetMapIPList().Contains(LatAndLon.ip))
+            {
+                return;
+            }
+            db.MapIPNode.Add(new MapIPNode
+            {
+                IP = LatAndLon.ip,
+                Lat = LatAndLon.latitude,
+                Lon = LatAndLon.longitude,
+            });
+            db.SaveChanges();
         }
         public List<TrustNode> GetAll()
         {
@@ -39,7 +73,7 @@ namespace ConfluxMiningTool.Models
             }
             catch (Exception)
             {
-     
+
             }
             return tmp;
         }

@@ -122,19 +122,49 @@ namespace ConfluxMiningTool
         {
             HttpClient http = new HttpClient();
             List<LatAndLon> latAndLons = new List<LatAndLon>();
-            var ipList = trustNodeRepository.GetAllActive().Where(x => x.Lat == null && x.IPAddressList != null && x.IPAddressList.Length > 4).Select(x => x.IPAddressList).Take(10).ToList();
-            foreach (var ip in ipList)
+
+            //get ip list
+            // http://13.75.113.21:4002/trusted-node-ip-list
+
+            var url = "http://13.75.113.21:4002/trusted-node-ip-list";
+            var result = http.GetAsync(url).Result;
+            var data = result.Content.ReadAsStringAsync().Result;
+            var mapIPList = trustNodeRepository.GetMapIPList();
+            var index = 0;
+            foreach (var ip in Regex.Matches(data, $@"\d+\.\d+\.\d+\.\d+").Select(x => x.ToString()))
             {
-                var api = $@"http://api.ipstack.com/{ip}?access_key=60f430bcae98649b74acb1bc34f1a8a5";
-                var result = http.GetAsync(api).Result;
-                var data = result.Content.ReadAsStringAsync().Result;
-                var parsedData = JsonConvert.DeserializeObject<LatAndLon>(data);
-                latAndLons.Add(parsedData);
+                if (index <= 10)
+                {
+                    if (!mapIPList.Contains(ip))
+                    {
+                        var api = $@"http://api.ipstack.com/{ip.ToString()}?access_key=60f430bcae98649b74acb1bc34f1a8a5";
+                        result = http.GetAsync(api).Result;
+                        data = result.Content.ReadAsStringAsync().Result;
+                        var parsedData = JsonConvert.DeserializeObject<LatAndLon>(data);
+                        if (
+                             !string.IsNullOrEmpty(parsedData.latitude)
+                            && !string.IsNullOrEmpty(parsedData.longitude)
+                               && parsedData.latitude.Trim().Length > 0
+                            && parsedData.longitude.Trim().Length > 0
+                            )
+                        {
+                            trustNodeRepository.StoreMapNode(parsedData);
+                            index++;
+                        }
+                    }
+                }
             }
-            trustNodeRepository.UpdateLatAndLon(latAndLons);
-
-
-
+             
+            //var ipList = trustNodeRepository.GetAllActive().Where(x => x.Lat == null && x.IPAddressList != null && x.IPAddressList.Length > 4).Select(x => x.IPAddressList).Take(10).ToList();
+            //foreach (var ip in ipList)
+            //{
+            //    var api = $@"http://api.ipstack.com/{ip}?access_key=60f430bcae98649b74acb1bc34f1a8a5";
+            //    result = http.GetAsync(api).Result;
+            //    data = result.Content.ReadAsStringAsync().Result;
+            //    var parsedData = JsonConvert.DeserializeObject<LatAndLon>(data);
+            //    latAndLons.Add(parsedData);
+            //}
+            //trustNodeRepository.UpdateLatAndLon(latAndLons);
         }
     }
 }
