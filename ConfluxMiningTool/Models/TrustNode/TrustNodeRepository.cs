@@ -28,7 +28,7 @@ namespace ConfluxMiningTool.Models
             foreach (var MapIPNode in MapIPNodes)
             {
                 baiduNodes.Add(
-                new BaiduNode { geoCoord = new decimal[] { Convert.ToDecimal(MapIPNode.Lat), Convert.ToDecimal(MapIPNode.Lon) } }
+                new BaiduNode { geoCoord = new decimal[] { Convert.ToDecimal(MapIPNode.Lon), Convert.ToDecimal(MapIPNode.Lat) } }
                     );
             }
             return baiduNodes;
