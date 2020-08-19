@@ -32,7 +32,7 @@
 
     <div id="map"></div>
     <canvas id="canvas"></canvas>
-    <div id="time" style="color:red;">Conflux 全球矿工节点</div>
+    <div id="time" style="color:red;"></div>
 
     <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5z33xSdgq6ZSZenV1VtNLYh9kTvAzU80"></script>
@@ -46,7 +46,8 @@
             enableMapClick: false
         });    // 创建Map实例
 window['MMM']=map;
-        map.centerAndZoom(new BMap.Point(12.011682,21.501461), 1);  // 初始化地图,设置中心点坐标和地图级别
+       // map.centerAndZoom(new BMap.Point(105.403119, 38.028658), 1);  // 初始化地图,设置中心点坐标和地图级别 
+map.centerAndZoom(new BMap.Point(12.011682,21.501461), 1);  
         map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
 
         // 地图自定义样式
@@ -199,19 +200,14 @@ window['MMM']=map;
                         type: 'Point',
                         coordinates: geoCoord 
                     },
-                    time: 0.001
-//   time: Math.random() * 10
+             //       time: Math.random() * 1
+   time: Math.random() * 10
                 });
             }
-
+ 
             var dataSet = new mapv.DataSet(data);
-
-          var c1=Math.random();
-var c2=Math.random();
-var c3=Math.random();
-var options = {
-                 fillStyle: 'rgba(255, 250, 50, 1)',  //ORIGNAL
-               // fillStyle: 'rgba('+parseInt(c1*255)+', '+parseInt(c2*255)+', '+parseInt(c3*255)+', '+Math.random()+')',
+            var options = {
+                fillStyle: 'rgba(255, 250, 50, 0.6)',
                 //shadowColor: 'rgba(255, 250, 50, 0.5)',
                 //shadowBlur: 3,
                 updateCallback: function (time) {
@@ -220,18 +216,28 @@ var options = {
 $('#time').html('Conflux 全球矿工节点');
                 },
                 size: 3,
-                draw: 'simple'
+                draw: 'simple',
+                animation: {
+                    type: 'time',
+                    stepsRange: {
+                        start: 0,
+                        end: 10
+                    },
+                    trails: 1,
+                    duration: 6,
+                }
             }
             var mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
         });
+
  setTimeout(function(){location.reload()},86400000)
-var lon=105.403119;
+var lon=12.011682;
 setInterval(function(){
-//lon+=60;
+// lon+=60;
  if(lon>=180){
-lon-=360;
+//lon-=360;
 }
-  map.centerAndZoom(new BMap.Point(12.011682,21.501461), 1)},2000000000)
+map.centerAndZoom(new BMap.Point(lon,21.501461), 1)},20000000)
     </script>
 	
 </body>
