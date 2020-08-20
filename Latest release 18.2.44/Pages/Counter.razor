@@ -3,55 +3,56 @@
 @using Newtonsoft.Json
 @inject NavigationManager NavigationManager
 
+ 
+<div class="control-section">
+    <SfChart Title="起源计划投票汇总">
+        <ChartEvents Load="ChartLoad" />
+        <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+        <ChartPrimaryXAxis LabelFormat="y" ValueType="Syncfusion.Blazor.Charts.ValueType.Category" EdgeLabelPlacement="EdgeLabelPlacement.Shift" LabelRotation="-25">
 
-    <div class="control-section">
-        <SfChart Title="起源计划投票汇总">
-            <ChartEvents Load="ChartLoad" />
-            <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
-            <ChartPrimaryXAxis LabelFormat="y" ValueType="Syncfusion.Blazor.Charts.ValueType.Category" EdgeLabelPlacement="EdgeLabelPlacement.Shift">
-                <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
-            </ChartPrimaryXAxis>
-            <ChartPrimaryYAxis LabelFormat="{value}" RangePadding="ChartRangePadding.None">
-                <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
-                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
-            </ChartPrimaryYAxis>
-            <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
-            <ChartSeriesCollection>
-                <ChartSeries DataSource="@ChartData" Name="超侃Real" XName="xValue" Width="2"
-                             Opacity="1" YName="yValue1" Type="ChartSeriesType.Line">
-                    <ChartMarker Visible="true" Width="10" Height="10">
-                    </ChartMarker>
-                </ChartSeries>
-                <ChartSeries DataSource="@ChartData" Name="So DApp" XName="xValue" Width="2"
-                             Opacity="1" YName="yValue2" Type="ChartSeriesType.Line">
-                    <ChartMarker Visible="true" Width="10" Height="10">
-                    </ChartMarker>
-                </ChartSeries>
-                <ChartSeries DataSource="@ChartData" Name="光头说财经" XName="xValue" Width="2"
-                             Opacity="1" YName="yValue3" Type="ChartSeriesType.Line">
-                    <ChartMarker Visible="true" Width="10" Height="10">
-                    </ChartMarker>
-                </ChartSeries>
-                <ChartSeries DataSource="@ChartData" Name="每日财经" XName="xValue" Width="2"
-                             Opacity="1" YName="yValue4" Type="ChartSeriesType.Line">
-                    <ChartMarker Visible="true" Width="10" Height="10">
-                    </ChartMarker>
-                </ChartSeries>
-            </ChartSeriesCollection>
-        </SfChart>
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis LabelFormat="{value}" RangePadding="ChartRangePadding.None">
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+        </ChartPrimaryYAxis>
+        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+        <ChartSeriesCollection>
+            <ChartSeries DataSource="@ChartData" Name="超侃Real" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue1" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="So DApp" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue2" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="光头说财经" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue3" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="每日财经" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue4" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+    </SfChart>
 
-        <SfAccumulationChart EnableBorderOnMouseMove="false" Title="@BarTitle" EnableSmartLabels="true">
-            <AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
-            <AccumulationChartTooltipSettings Enable="true" Format=" ${point.y}</b>"></AccumulationChartTooltipSettings>
-            <AccumulationChartSeriesCollection>
-                <AccumulationChartSeries DataSource="@StatisticsDetails" Name="" XName="Country" YName="Users" StartAngle="0" InnerRadius="0%">
-                    <AccumulationDataLabelSettings Name="Text" Visible="true" Position="AccumulationLabelPosition.Outside">
-                        <AccumulationChartConnector Length="20px" Type="ConnectorType.Curve"></AccumulationChartConnector>
-                    </AccumulationDataLabelSettings>
-                </AccumulationChartSeries>
-            </AccumulationChartSeriesCollection>
-        </SfAccumulationChart>
-    </div>
+    <SfAccumulationChart EnableBorderOnMouseMove="false" Title="@BarTitle" EnableSmartLabels="true">
+        <AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
+        <AccumulationChartTooltipSettings Enable="true" Format=" ${point.y}</b>"></AccumulationChartTooltipSettings>
+        <AccumulationChartSeriesCollection>
+            <AccumulationChartSeries DataSource="@StatisticsDetails" Name="" XName="Country" YName="Users" StartAngle="0" InnerRadius="0%">
+                <AccumulationDataLabelSettings Name="Text" Visible="true" Position="AccumulationLabelPosition.Outside">
+                    <AccumulationChartConnector Length="20px" Type="ConnectorType.Curve"></AccumulationChartConnector>
+                </AccumulationDataLabelSettings>
+            </AccumulationChartSeries>
+        </AccumulationChartSeriesCollection>
+    </SfAccumulationChart>
+</div>
 @code{
     public string BarTitle = "";
     private string CurrentUri;
@@ -86,29 +87,49 @@
         result = http.GetAsync("http://confluxscan.io/api/token/query?address=0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa").Result;
         data = result.Content.ReadAsStringAsync().Result;
 
-        var addressTotal= System.Text.RegularExpressions.Regex.Matches(data, "accountTotal\":(\\d+)")[0].Groups[1].Value;
+        var addressTotal = System.Text.RegularExpressions.Regex.Matches(data, "accountTotal\":(\\d+)")[0].Groups[1].Value;
 
 
         var index = 0;
         foreach (var label in parsedData.labels)
         {
-            ChartData.Add(
-            new LineChartData
+            var l = label.Replace(" ", "").Replace("/", "").Replace(":", "");
+            if (false)
             {
-                xValue = label,
-                yValueTotal = parsedData.datasets[0].data[index],
-                yValueUnUsed = parsedData.datasets[1].data[index],
-                yValue1 = parsedData.datasets[2].data[index],
-                yValue2 = parsedData.datasets[3].data[index],
-                yValue3 = parsedData.datasets[4].data[index],
-                yValue4 = parsedData.datasets[5].data[index],
+                ChartData.Add(
+       new LineChartData
+       {
+           xValue = label,
+           yValueTotal = parsedData.datasets[0].data[index],
+           yValueUnUsed = parsedData.datasets[1].data[index],
+           yValue1 = parsedData.datasets[2].data[index] - 31250,
+           yValue2 = parsedData.datasets[3].data[index] - 21887,
+           yValue3 = parsedData.datasets[4].data[index] - 8641,
+           yValue4 = parsedData.datasets[5].data[index] - 23092,
+       }
+           );
             }
-                );
+            else
+            {
+                ChartData.Add(
+      new LineChartData
+      {
+          xValue = label,
+          yValueTotal = parsedData.datasets[0].data[index],
+          yValueUnUsed = parsedData.datasets[1].data[index],
+          yValue1 = parsedData.datasets[2].data[index]  ,
+          yValue2 = parsedData.datasets[3].data[index] ,
+          yValue3 = parsedData.datasets[4].data[index] ,
+          yValue4 = parsedData.datasets[5].data[index] ,
+      }
+          );
+            }
+
             index++;
         }
 
-        var total= parsedData.datasets[0].data[parsedData.datasets[0].data.Length - 1];
-        var unused= parsedData.datasets[1].data[parsedData.datasets[0].data.Length - 1];
+        var total = parsedData.datasets[0].data[parsedData.datasets[0].data.Length - 1];
+        var unused = parsedData.datasets[1].data[parsedData.datasets[0].data.Length - 1];
         var used = total - unused;
         StatisticsDetails.Add(new Statistics { Country = "已投票数", Users = used, Text = $@"已投票数: {used}" });
         StatisticsDetails.Add(new Statistics { Country = "未投票数", Users = unused, Text = $@"未投票数: {unused}" });
