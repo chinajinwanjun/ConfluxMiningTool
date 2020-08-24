@@ -1,0 +1,71 @@
+﻿
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>CircleMarker</title>
+    <style type="text/css">
+    html, body, #map {
+      width: 100%;
+      height: 100%;
+      margin:0;
+    }
+    </style>
+  <script type="text/javascript" src='https://a.amap.com/jsapi_demos/static/resource/capitals.js'></script>
+  <script type="text/javascript" src='https://webapi.amap.com/maps?v=1.4.15&key=您申请的key值'></script>
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map = new AMap.Map('map', {
+        // viewMode: '3D',
+        zoom: 3,
+        center: [12.011682,21.501461],
+lang:'en',
+ 
+           mapStyle: "amap://styles/darkblue"
+      })
+        $.get('/home/GetBaiduNodeList', function (rs) {
+
+var list=rs[0];
+for(var i=0;i<list.length;i++){
+
+    var center = list[i].geoCoord;
+
+          
+                        console.log(center)
+        var circleMarker = new AMap.CircleMarker({
+          center:center,
+          radius:6+1*Math.random() ,//3D视图下，CircleMarker半径不要超过64px
+          strokeColor:'white',
+          strokeWeight:2,
+          strokeOpacity:0.5,
+          fillColor:'rgba(255,0,0,1)',
+          fillOpacity:0.6,
+          zIndex:10,
+          bubble:true,
+          cursor:'pointer',
+          clickable: true
+        })
+        circleMarker.setMap(map)
+
+}
+
+
+});
+
+    
+    
+       
+      
+
+setTimeout(function(){ map.setMapStyle( 'amap://styles/darkblue');},3000)     ;
+    </script>
+  </body>
+</html>
+
+       
