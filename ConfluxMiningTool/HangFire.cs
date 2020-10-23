@@ -46,15 +46,15 @@ namespace ConfluxMiningTool
             int usedTotal = 0;
             foreach (var teamAddress in teamAddressList)
             {
-                Regex regex = new Regex("\"balance\":\"(\\d+)\"");
+                Regex regex = new Regex("CC\",\"balance\":\"(\\d+)\"");
                 var str = http.GetAsync($@"http://confluxscan.io/contract-manager/api/account/token/list?address={teamAddress.ToLower()}").Result.Content.ReadAsStringAsync().Result;
                 var balance = regex.Matches(str)[0].Groups[1].ToString();
-                balanceHistory.Add(new BalanceHistory
-                {
-                    Address = teamAddress.ToLower(),
-                    Balance = Convert.ToDouble(balance),
-                    CreatedTime = DateTime.Now,
-                });
+                //balanceHistory.Add(new BalanceHistory
+                //{
+                //    Address = teamAddress.ToLower(),
+                //    Balance = Convert.ToDouble(balance),
+                //    CreatedTime = DateTime.Now,
+                //});
                 usedTotal += int.Parse(balance);
             }
             // total
@@ -62,19 +62,19 @@ namespace ConfluxMiningTool
                 Regex regex = new Regex("\"totalSupply\":\"(\\d+)\"");
                 var str = http.GetAsync($@"http://confluxscan.io/api/token/query?address=0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa").Result.Content.ReadAsStringAsync().Result;
                 var balance = regex.Matches(str)[0].Groups[1].ToString();
-                balanceHistory.Add(new BalanceHistory
-                {
-                    Address = "0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa",
-                    Balance = Convert.ToDouble(balance),
-                    CreatedTime = DateTime.Now,
-                });
+                //balanceHistory.Add(new BalanceHistory
+                //{
+                //    Address = "0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa",
+                //    Balance = Convert.ToDouble(balance),
+                //    CreatedTime = DateTime.Now,
+                //});
                 var unusedTotal = int.Parse(balance) - usedTotal;
-                balanceHistory.Add(new BalanceHistory
-                {
-                    Address = "0x8unuseda4e3201b2f7aa720b3754dfa585b4dbfa",
-                    Balance = Convert.ToDouble(unusedTotal),
-                    CreatedTime = DateTime.Now,
-                });
+                //balanceHistory.Add(new BalanceHistory
+                //{
+                //    Address = "0x8unuseda4e3201b2f7aa720b3754dfa585b4dbfa",
+                //    Balance = Convert.ToDouble(unusedTotal),
+                //    CreatedTime = DateTime.Now,
+                //});
             }
 
             //total
@@ -95,6 +95,11 @@ namespace ConfluxMiningTool
                     });
                 }
 
+            }
+            //remove 10 days ago 
+            foreach (var account in accountRepository.GetAccounts())
+            {
+                balanceHistory.Remove(account.Address);
             }
         }
         public double GetBalanceByAddress(string address)

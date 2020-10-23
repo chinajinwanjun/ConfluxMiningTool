@@ -28,7 +28,12 @@ namespace ConfluxMiningTool.Models
             db.BalanceHistory.Add(balanceHistory);
             db.SaveChanges();
         }
-
+        public void Remove(string wallet)
+        {
+            var tenDaysAgo = DateTime.Now.AddDays(-10);
+            db.BalanceHistory.RemoveRange(db.BalanceHistory.Where(x => x.CreatedTime < tenDaysAgo&&x.Address==wallet).ToList());
+            db.SaveChanges();
+        }
         public dynamic GetChartByAddress(string addresses, int range = 100)
         {
             var chart = new Chart();

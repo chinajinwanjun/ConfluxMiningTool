@@ -1,0 +1,1 @@
+.\cfxmine.exe --gpu
