@@ -34,6 +34,7 @@ namespace ConfluxMiningTool
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<IBalanceHistoryRepository, BalanceHistoryRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IMinerBlockRepository, MinerBlockRepository>();
             services.AddScoped<TrustNodeRepository>();
             services.AddTransient<IDailyTrustedNodeRepository, DailyTrustedNodeRepository>();
             services.Configure<ForwardedHeadersOptions>(options =>

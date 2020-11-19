@@ -15,28 +15,49 @@ namespace ConfluxMiningTool
     public class HangFire
     {
         private readonly IBalanceHistoryRepository balanceHistory;
+        private readonly IMinerBlockRepository minerBlockRepository;
         private readonly IAccountRepository accountRepository;
         private readonly IConfiguration configuration;
         private readonly TrustNodeRepository trustNodeRepository;
         private readonly IDailyTrustedNodeRepository dailyTrustedNodeRepository;
-        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, TrustNodeRepository trustNodeRepository, IDailyTrustedNodeRepository dailyTrustedNodeRepository, IConfiguration configuration)
+        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, TrustNodeRepository trustNodeRepository, IDailyTrustedNodeRepository dailyTrustedNodeRepository, IConfiguration configuration, IMinerBlockRepository minerBlockRepository)
         {
             this.balanceHistory = balanceHistory;
             this.accountRepository = accountRepository;
             this.trustNodeRepository = trustNodeRepository;
             this.configuration = configuration;
             this.dailyTrustedNodeRepository = dailyTrustedNodeRepository;
+            this.minerBlockRepository = minerBlockRepository;
         }
         public HangFire()
         {
         }
         public void AddJob()
         {
-            RecurringJob.AddOrUpdate(() => WriteMiningData(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-            RecurringJob.AddOrUpdate(() => UpdateLatAndLon(), "*/5 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-            RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            //RecurringJob.AddOrUpdate(() => WriteMiningData(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            //RecurringJob.AddOrUpdate(() => UpdateLatAndLon(), "*/5 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            //RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            RecurringJob.AddOrUpdate(() => BlockRate(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
         }
-
+        public class Block
+        {
+            public string address { get; set; }
+            public int block_count { get; set; }
+        }
+        public void BlockRate()
+        {
+            HttpClient http = new HttpClient();
+            var str = http.GetAsync($@"https://mining.confluxnetwork.org/test/get-miner-list").Result.Content.ReadAsStringAsync().Result;
+            var blocks = JsonConvert.DeserializeObject<List<Block>>(str);
+            var now = DateTime.Now.ToString("yyyyMMdd HHmm");
+            foreach (var block in blocks)
+            {
+                if (block.address!=null)
+                {
+                    minerBlockRepository.Add(new MinerBlock { Block = block.block_count, CreatedTime = now, Wallet = block.address });
+                }
+            }
+        }
         public void WriteMiningData()
         {
             //team
@@ -159,7 +180,7 @@ namespace ConfluxMiningTool
                     }
                 }
             }
-             
+
             //var ipList = trustNodeRepository.GetAllActive().Where(x => x.Lat == null && x.IPAddressList != null && x.IPAddressList.Length > 4).Select(x => x.IPAddressList).Take(10).ToList();
             //foreach (var ip in ipList)
             //{
