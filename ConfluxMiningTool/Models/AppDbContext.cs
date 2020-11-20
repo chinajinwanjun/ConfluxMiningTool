@@ -15,6 +15,7 @@ namespace ConfluxMiningTool.Models
 
         public DbSet<BalanceHistory> BalanceHistory { get; set; }
         public DbSet<MinerBlock> MinerBlock { get; set; }
+        public DbSet<Transaction> Transaction { get; set; }
         public DbSet<Account> Account { get; set; }
         public DbSet<TrustNode> TrustNode { get; set; }
         public DbSet<MapIPNode> MapIPNode { get; set; }

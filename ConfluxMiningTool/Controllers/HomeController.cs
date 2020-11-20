@@ -20,12 +20,14 @@ namespace ConfluxMiningTool.Controllers
         private readonly IBalanceHistoryRepository _balanceHistory;
         private readonly IAccountRepository accountRepository;
         private readonly TrustNodeRepository trustNodeRepository;
-        public HomeController(ILogger<HomeController> logger, IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, TrustNodeRepository trustNodeRepository)
+        private readonly ITransactionRepository transactionRepository;
+        public HomeController(ILogger<HomeController> logger, IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, TrustNodeRepository trustNodeRepository, ITransactionRepository transactionRepository)
         {
             _logger = logger;
             this.accountRepository = accountRepository;
             this._balanceHistory = balanceHistory;
             this.trustNodeRepository = trustNodeRepository;
+            this.transactionRepository = transactionRepository;
         }
 
         public IActionResult Index()
@@ -127,6 +129,10 @@ namespace ConfluxMiningTool.Controllers
             var baiduNodeList = trustNodeRepository.GetBaiduNodeList();
             object[] formatedObj = new object[] { baiduNodeList };
             return Json(formatedObj);
+        }
+        public JsonResult GetNFTList()
+        {
+            return Json(new { Count = transactionRepository.GetNFT().Count, List = transactionRepository.GetNFT(), });
         }
     }
 }

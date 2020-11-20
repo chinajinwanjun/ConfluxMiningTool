@@ -32,9 +32,11 @@ namespace ConfluxMiningTool
             services.AddHangfire(r => r.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<ITransactionRepository, TransactionRepository>();
             services.AddTransient<IBalanceHistoryRepository, BalanceHistoryRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<IMinerBlockRepository, MinerBlockRepository>();
+   
             services.AddScoped<TrustNodeRepository>();
             services.AddTransient<IDailyTrustedNodeRepository, DailyTrustedNodeRepository>();
             services.Configure<ForwardedHeadersOptions>(options =>

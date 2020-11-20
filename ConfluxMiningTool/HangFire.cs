@@ -16,11 +16,12 @@ namespace ConfluxMiningTool
     {
         private readonly IBalanceHistoryRepository balanceHistory;
         private readonly IMinerBlockRepository minerBlockRepository;
+        private readonly ITransactionRepository transactionRepository;
         private readonly IAccountRepository accountRepository;
         private readonly IConfiguration configuration;
         private readonly TrustNodeRepository trustNodeRepository;
         private readonly IDailyTrustedNodeRepository dailyTrustedNodeRepository;
-        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, TrustNodeRepository trustNodeRepository, IDailyTrustedNodeRepository dailyTrustedNodeRepository, IConfiguration configuration, IMinerBlockRepository minerBlockRepository)
+        public HangFire(IBalanceHistoryRepository balanceHistory, IAccountRepository accountRepository, TrustNodeRepository trustNodeRepository, IDailyTrustedNodeRepository dailyTrustedNodeRepository, IConfiguration configuration, IMinerBlockRepository minerBlockRepository, ITransactionRepository transactionRepository)
         {
             this.balanceHistory = balanceHistory;
             this.accountRepository = accountRepository;
@@ -28,6 +29,7 @@ namespace ConfluxMiningTool
             this.configuration = configuration;
             this.dailyTrustedNodeRepository = dailyTrustedNodeRepository;
             this.minerBlockRepository = minerBlockRepository;
+            this.transactionRepository = transactionRepository;
         }
         public HangFire()
         {
@@ -37,7 +39,8 @@ namespace ConfluxMiningTool
             //RecurringJob.AddOrUpdate(() => WriteMiningData(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
             //RecurringJob.AddOrUpdate(() => UpdateLatAndLon(), "*/5 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
             //RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-            RecurringJob.AddOrUpdate(() => BlockRate(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            //RecurringJob.AddOrUpdate(() => BlockRate(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            RecurringJob.AddOrUpdate(() => StoreTransaction(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
         }
         public class Block
         {
@@ -46,15 +49,39 @@ namespace ConfluxMiningTool
         }
         public void BlockRate()
         {
+            return;
             HttpClient http = new HttpClient();
             var str = http.GetAsync($@"https://mining.confluxnetwork.org/test/get-miner-list").Result.Content.ReadAsStringAsync().Result;
             var blocks = JsonConvert.DeserializeObject<List<Block>>(str);
             var now = DateTime.Now.ToString("yyyyMMdd HHmm");
             foreach (var block in blocks)
             {
-                if (block.address!=null)
+                if (block.address != null)
                 {
                     minerBlockRepository.Add(new MinerBlock { Block = block.block_count, CreatedTime = now, Wallet = block.address });
+                }
+            }
+        }
+       
+        public class RawTrans
+        {
+            public int total { get; set; }
+            public List<Transaction> list { get; set; }
+        }
+        public void StoreTransaction()
+        {
+            HttpClient http = new HttpClient();
+            var transactionHashs = transactionRepository.GetAllHash();
+            for (int i = 0; i < 5; i++)
+            {
+                var str = http.GetAsync($@"https://confluxscan.io/v1/transfer?accountAddress=0x86d1f0072e8aa1a38d34b4bfa7521cdb5293849f&limit=100&skip={i * 100}").Result.Content.ReadAsStringAsync().Result;
+                var rawTrans = JsonConvert.DeserializeObject<RawTrans>(str);
+                foreach (var block in rawTrans.list)
+                {
+                    if (!transactionHashs.Contains(block.transactionHash))
+                    {
+                        transactionRepository.Add(new Transaction { from = block.from, transactionHash = block.transactionHash, value = block.value / 1000000000000000000 });
+                    }
                 }
             }
         }
