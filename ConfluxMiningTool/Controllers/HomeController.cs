@@ -134,5 +134,10 @@ namespace ConfluxMiningTool.Controllers
         {
             return Json(new { Count = transactionRepository.GetNFT().Count, List = transactionRepository.GetNFT(), });
         }
+        public dynamic GetMinerList(DateTime @from, DateTime @to)
+        {
+            var ret = transactionRepository.GetMinerList(from, @to.AddDays(1));
+            return JsonConvert.SerializeObject( ret);
+        }
     }
 }

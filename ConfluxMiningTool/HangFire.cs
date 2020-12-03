@@ -40,7 +40,8 @@ namespace ConfluxMiningTool
             //RecurringJob.AddOrUpdate(() => UpdateLatAndLon(), "*/5 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
             //RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
             //RecurringJob.AddOrUpdate(() => BlockRate(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-            RecurringJob.AddOrUpdate(() => StoreTransaction(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            RecurringJob.AddOrUpdate(() => StoreTransaction(), "*/2 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            RecurringJob.AddOrUpdate(() => AddMiner(), "*/5 3,12,23,18,19 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
         }
         public class Block
         {
@@ -62,14 +63,29 @@ namespace ConfluxMiningTool
                 }
             }
         }
-       
+
         public class RawTrans
         {
             public int total { get; set; }
             public List<Transaction> list { get; set; }
         }
+        public class RawMiner
+        {
+            public List<Miner> list { get; set; }
+        }
+        public void AddMiner()
+        {
+            HttpClient http = new HttpClient();
+            var str = http.GetAsync($@"https://testnet.confluxscan.io/v1/block?limit=100&skip=0").Result.Content.ReadAsStringAsync().Result;
+            var rawMiners = JsonConvert.DeserializeObject<RawMiner>(str);
+            foreach (var miner in rawMiners.list)
+            {
+                transactionRepository.AddMiner(miner);
+            }
+        }
         public void StoreTransaction()
         {
+            return;
             HttpClient http = new HttpClient();
             var transactionHashs = transactionRepository.GetAllHash();
             for (int i = 0; i < 5; i++)
