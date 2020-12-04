@@ -82,7 +82,7 @@ namespace ConfluxMiningTool.Models
                     {
                         miner = g.First().miner,
                         count = g.Count(),
-                        detail = g.Select(x => x.CreatedDate.ToShortDateString()),
+                        detail = g.OrderBy(x => x.CreatedDate).Select(x => x.CreatedDate.ToShortDateString()),
                     }).ToList();
         }
     }
