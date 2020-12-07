@@ -85,7 +85,6 @@ namespace ConfluxMiningTool
         }
         public void StoreTransaction()
         {
-            return;
             HttpClient http = new HttpClient();
             var transactionHashs = transactionRepository.GetAllHash();
             for (int i = 0; i < 5; i++)
