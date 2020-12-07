@@ -30,6 +30,7 @@ namespace ConfluxMiningTool.Models
         public List<string> GetAllHash();
         public dynamic GetNFT();
         public dynamic GetMinerList(DateTime @from, DateTime @to);
+        public dynamic GetNFTBurned();
     }
     public class TransactionRepository : ITransactionRepository
     {
@@ -73,6 +74,10 @@ namespace ConfluxMiningTool.Models
                         Amount = g.Sum(tr => tr.value),
                         g.First().createdTime,
                     }).ToList().Where(x => x.Amount >= 1000).OrderByDescending(x => x.createdTime).ToList();
+        }
+        public dynamic GetNFTBurned()
+        {
+            return db.Transaction.Sum(x => x.value);
         }
         public dynamic GetMinerList(DateTime @from, DateTime to)
         {

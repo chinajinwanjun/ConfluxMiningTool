@@ -132,12 +132,12 @@ namespace ConfluxMiningTool.Controllers
         }
         public JsonResult GetNFTList()
         {
-            return Json(new { Count = transactionRepository.GetNFT().Count, List = transactionRepository.GetNFT(), });
+            return Json(new { Count = transactionRepository.GetNFT().Count, Burned = transactionRepository.GetNFTBurned(), List = transactionRepository.GetNFT(), });
         }
         public dynamic GetMinerList(DateTime @from, DateTime @to)
         {
             var ret = transactionRepository.GetMinerList(from, @to.AddDays(1));
-            return JsonConvert.SerializeObject( ret);
+            return JsonConvert.SerializeObject(ret);
         }
     }
 }
