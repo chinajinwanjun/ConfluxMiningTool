@@ -22,7 +22,14 @@ namespace ConfluxMiningTool.Models
         public decimal value { get; set; }
         public DateTime createdTime { get; set; }
     }
-
+    public class PoolHashRate
+    {
+        [Key]
+        public long ID { get; set; }
+        public string Name { get; set; }
+        public long Hashrate { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
     public interface ITransactionRepository
     {
         public void Add(Transaction Transaction);
@@ -31,6 +38,7 @@ namespace ConfluxMiningTool.Models
         public dynamic GetNFT();
         public dynamic GetMinerList(DateTime @from, DateTime @to);
         public dynamic GetNFTBurned();
+        public void AddPoolHashRate(List<PoolHashRate> poolHashRate);
     }
     public class TransactionRepository : ITransactionRepository
     {
@@ -58,6 +66,11 @@ namespace ConfluxMiningTool.Models
                 });
             }
 
+            db.SaveChanges();
+        }
+        public void AddPoolHashRate(List<PoolHashRate> poolHashRate)
+        {
+            db.PoolHashRate.AddRange(poolHashRate);
             db.SaveChanges();
         }
         public List<string> GetAllHash()

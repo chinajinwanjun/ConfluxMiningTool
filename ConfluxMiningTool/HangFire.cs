@@ -43,6 +43,10 @@ namespace ConfluxMiningTool
             RecurringJob.AddOrUpdate(() => StoreTransaction(), "*/2 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
             RecurringJob.AddOrUpdate(() => AddMiner(), "*/5 3,12,23,18,19 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
         }
+
+            RecurringJob.AddOrUpdate(() => StorePoolData(), "*/10 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+
+        }
         public class Block
         {
             public string address { get; set; }
@@ -72,6 +76,26 @@ namespace ConfluxMiningTool
         public class RawMiner
         {
             public List<Miner> list { get; set; }
+        }
+        public void StorePoolData()
+        {
+            HttpClient http = new HttpClient();
+            var str = http.GetAsync($@"http://www.wabi.com/coins/conflux").Result.Content.ReadAsStringAsync().Result;
+            Regex regex = new Regex("_blank\">(.+?)<\\/a>[\\s\\S]{3,100}data-sort=\"(\\d+)\"");
+            List<PoolHashRate> poolHashRateList = new List<PoolHashRate>();
+            foreach (Match match in regex.Matches(str))
+            {
+                var poolName = match.Groups[1].Value;
+                var hashRate = match.Groups[2].Value;
+                var poolHashRate = new PoolHashRate
+                {
+                    CreatedAt = DateTime.Now,
+                    Hashrate = Convert.ToInt64(hashRate),
+                    Name = poolName,
+                };
+                poolHashRateList.Add(poolHashRate);
+            }
+            transactionRepository.AddPoolHashRate(poolHashRateList);
         }
         public void AddMiner()
         {
