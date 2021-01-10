@@ -1,11 +1,16 @@
 ﻿@page "/counter"
 @using Syncfusion.Blazor.Charts
 @using Newtonsoft.Json
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+@using Latest_release_18._2._44.Data
 @inject NavigationManager NavigationManager
+@inject PoolHashRateService PoolHashRateService
 
- 
 <div class="control-section">
-    <SfChart Title="起源计划投票汇总">
+    <SfChart Title="矿池算力统计图谱">
         <ChartEvents Load="ChartLoad" />
         <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
         <ChartPrimaryXAxis LabelFormat="y" ValueType="Syncfusion.Blazor.Charts.ValueType.Category" EdgeLabelPlacement="EdgeLabelPlacement.Shift" LabelRotation="-25">
@@ -18,40 +23,39 @@
         </ChartPrimaryYAxis>
         <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
         <ChartSeriesCollection>
-            <ChartSeries DataSource="@ChartData" Name="超侃Real" XName="xValue" Width="2"
+            <ChartSeries DataSource="@ChartData" Name="Poolflare" XName="xValue" Width="2"
                          Opacity="1" YName="yValue1" Type="ChartSeriesType.Line">
                 <ChartMarker Visible="true" Width="10" Height="10">
                 </ChartMarker>
             </ChartSeries>
-            <ChartSeries DataSource="@ChartData" Name="So DApp" XName="xValue" Width="2"
+            <ChartSeries DataSource="@ChartData" Name="火币矿池" XName="xValue" Width="2"
                          Opacity="1" YName="yValue2" Type="ChartSeriesType.Line">
                 <ChartMarker Visible="true" Width="10" Height="10">
                 </ChartMarker>
             </ChartSeries>
-            <ChartSeries DataSource="@ChartData" Name="光头说财经" XName="xValue" Width="2"
+            <ChartSeries DataSource="@ChartData" Name="蜜蜂矿池" XName="xValue" Width="2"
                          Opacity="1" YName="yValue3" Type="ChartSeriesType.Line">
                 <ChartMarker Visible="true" Width="10" Height="10">
                 </ChartMarker>
             </ChartSeries>
-            <ChartSeries DataSource="@ChartData" Name="每日财经" XName="xValue" Width="2"
+            <ChartSeries DataSource="@ChartData" Name="鱼池" XName="xValue" Width="2"
                          Opacity="1" YName="yValue4" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="独角兽矿池" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue5" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="MatPool" XName="xValue" Width="2"
+                         Opacity="1" YName="yValue6" Type="ChartSeriesType.Line">
                 <ChartMarker Visible="true" Width="10" Height="10">
                 </ChartMarker>
             </ChartSeries>
         </ChartSeriesCollection>
     </SfChart>
 
-    <SfAccumulationChart EnableBorderOnMouseMove="false" Title="@BarTitle" EnableSmartLabels="true">
-        <AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
-        <AccumulationChartTooltipSettings Enable="true" Format=" ${point.y}</b>"></AccumulationChartTooltipSettings>
-        <AccumulationChartSeriesCollection>
-            <AccumulationChartSeries DataSource="@StatisticsDetails" Name="" XName="Country" YName="Users" StartAngle="0" InnerRadius="0%">
-                <AccumulationDataLabelSettings Name="Text" Visible="true" Position="AccumulationLabelPosition.Outside">
-                    <AccumulationChartConnector Length="20px" Type="ConnectorType.Curve"></AccumulationChartConnector>
-                </AccumulationDataLabelSettings>
-            </AccumulationChartSeries>
-        </AccumulationChartSeriesCollection>
-    </SfAccumulationChart>
 </div>
 @code{
     public string BarTitle = "";
@@ -59,8 +63,8 @@
     public class LineChartData
     {
         public string xValue { get; set; }
-        public double yValueTotal { get; set; }
-        public double yValueUnUsed { get; set; }
+        public double yValue5 { get; set; }
+        public double yValue6 { get; set; }
         public double yValue1 { get; set; }
         public double yValue2 { get; set; }
         public double yValue3 { get; set; }
@@ -79,61 +83,31 @@
     };
     protected override void OnInitialized()
     {
-        HttpClient http = new HttpClient();
-        var result = http.GetAsync("http://47.91.220.168:8888/home/GetChartByAddress?address=0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa,0x8unuseda4e3201b2f7aa720b3754dfa585b4dbfa,0x1c2b0cde31b96e52cf5236e75e8bbfc0dac038e5,0x1a8fbf02d66daafa902885dd958650d6865d4fcc,0x10933e0d887f62d1f00fc7b93575e89e82cbd640,0x19b9e817ec206241b3bd71cf2152d9695d2e439b").Result;
-        var data = result.Content.ReadAsStringAsync().Result;
-        var parsedData = JsonConvert.DeserializeObject<MisedData>(data);
-
-        result = http.GetAsync("http://confluxscan.io/api/token/query?address=0x8f50e31a4e3201b2f7aa720b3754dfa585b4dbfa").Result;
-        data = result.Content.ReadAsStringAsync().Result;
-
-        var addressTotal = System.Text.RegularExpressions.Regex.Matches(data, "accountTotal\":(\\d+)")[0].Groups[1].Value;
+        var poolHashRateList = PoolHashRateService.Get();
 
 
-        var index = 0;
-        foreach (var label in parsedData.labels)
+        foreach (var poolHashRate in poolHashRateList)
         {
-            var l = label.Replace(" ", "").Replace("/", "").Replace(":", "");
-            if (false)
+            if (poolHashRate.Values.Count==6)
             {
                 ChartData.Add(
-       new LineChartData
-       {
-           xValue = label,
-           yValueTotal = parsedData.datasets[0].data[index],
-           yValueUnUsed = parsedData.datasets[1].data[index],
-           yValue1 = parsedData.datasets[2].data[index] - 31250,
-           yValue2 = parsedData.datasets[3].data[index] - 21887,
-           yValue3 = parsedData.datasets[4].data[index] - 8641,
-           yValue4 = parsedData.datasets[5].data[index] - 23092,
-       }
-           );
-            }
-            else
-            {
-                ChartData.Add(
-      new LineChartData
-      {
-          xValue = label,
-          yValueTotal = parsedData.datasets[0].data[index],
-          yValueUnUsed = parsedData.datasets[1].data[index],
-          yValue1 = parsedData.datasets[2].data[index]  ,
-          yValue2 = parsedData.datasets[3].data[index] ,
-          yValue3 = parsedData.datasets[4].data[index] ,
-          yValue4 = parsedData.datasets[5].data[index] ,
-      }
-          );
+new LineChartData
+{
+  xValue = poolHashRate.CreatedAt,
+
+  yValue1 = Math.Round((double)poolHashRate.Values[0] / 1000000000, 2),
+  yValue2 = Math.Round((double)poolHashRate.Values[1] / 1000000000, 2),
+  yValue3 = Math.Round((double)poolHashRate.Values[2] / 1000000000, 2),
+  yValue4 = Math.Round((double)poolHashRate.Values[3] / 1000000000, 2),
+  yValue5 = Math.Round((double)poolHashRate.Values[4] / 1000000000, 2),
+  yValue6 = Math.Round((double)poolHashRate.Values[5] / 1000000000, 2),
+}
+  );
             }
 
-            index++;
         }
 
-        var total = parsedData.datasets[0].data[parsedData.datasets[0].data.Length - 1];
-        var unused = parsedData.datasets[1].data[parsedData.datasets[0].data.Length - 1];
-        var used = total - unused;
-        StatisticsDetails.Add(new Statistics { Country = "已投票数", Users = used, Text = $@"已投票数: {used}" });
-        StatisticsDetails.Add(new Statistics { Country = "未投票数", Users = unused, Text = $@"未投票数: {unused}" });
-        BarTitle = $@"总票数:{total}, 投票率{(used * 1.0 / total * 100).ToString("##.##")}%,持有人: {addressTotal}地址 ";
+
     }
     public class Data
     {

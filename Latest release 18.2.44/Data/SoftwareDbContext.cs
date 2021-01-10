@@ -9,6 +9,14 @@ namespace Latest_release_18._2._44.Data
         public long ID { get; set; }
         public string Name { get; set; }
     }
+    [System.ComponentModel.DataAnnotations.Schema.Table("PoolHashRate")]
+    public class PoolHashRate
+    {
+        public long ID { get; set; }
+        public string Name { get; set; }
+        public long Hashrate { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
     [System.ComponentModel.DataAnnotations.Schema.Table("DailyTrustedNode")]
     public class DailyTrustedNode
     {
@@ -29,6 +37,7 @@ namespace Latest_release_18._2._44.Data
         {
         }
         public DbSet<Student> Students { get; set; }
+        public DbSet<PoolHashRate> PoolHashRates { get; set; }
         public DbSet<DailyTrustedNode> DailyTrustedNodes { get; set; }
     }
 
