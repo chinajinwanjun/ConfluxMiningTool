@@ -6,10 +6,28 @@
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Inputs
 @using Latest_release_18._2._44.Data
+@using Syncfusion.Blazor.Calendars
 @inject NavigationManager NavigationManager
 @inject PoolHashRateService PoolHashRateService
 
 <div class="control-section">
+    <div class="row">
+        <div class="col col-3">
+            From
+            <SfDatePicker TValue="DateTime?" Placeholder='Choose a Date' Value="@From">
+                <DatePickerEvents TValue="DateTime?" ValueChange="FromValueChangeHandler"></DatePickerEvents>
+            </SfDatePicker>
+        </div>
+        <div class="col col-3">
+            To<SfDatePicker TValue="DateTime?" Placeholder='Choose a Date' Value="@To"  >
+                <DatePickerEvents TValue="DateTime?" ValueChange="ToValueChangeHandler"></DatePickerEvents>
+            </SfDatePicker>
+        </div>
+        <div class="col col-3" style="color:red;">
+            Tips: 时间范围不要超过3天，超过3天可能无法加载出完整数据
+        </div>
+    </div>
+
     <SfChart Title="矿池算力统计图谱">
         <ChartEvents Load="ChartLoad" />
         <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
@@ -23,6 +41,11 @@
         </ChartPrimaryYAxis>
         <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
         <ChartSeriesCollection>
+            <ChartSeries DataSource="@ChartData" Name="总算力" XName="xValue" Width="2"
+                         Opacity="1" YName="yValueSum" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
             <ChartSeries DataSource="@ChartData" Name="Poolflare" XName="xValue" Width="2"
                          Opacity="1" YName="yValue1" Type="ChartSeriesType.Line">
                 <ChartMarker Visible="true" Width="10" Height="10">
@@ -58,8 +81,11 @@
 
 </div>
 @code{
+    private static int constDay = 3;
     public string BarTitle = "";
     private string CurrentUri;
+    public DateTime From { get; set; } = DateTime.Now.AddDays(-constDay);
+    public DateTime To { get; set; } = DateTime.Now.AddDays(0);
     public class LineChartData
     {
         public string xValue { get; set; }
@@ -69,6 +95,7 @@
         public double yValue2 { get; set; }
         public double yValue3 { get; set; }
         public double yValue4 { get; set; }
+        public double yValueSum { get; set; }
     }
 
     public class Statistics
@@ -81,33 +108,55 @@
     {
 
     };
-    protected override void OnInitialized()
+    public void FromValueChangeHandler(Syncfusion.Blazor.Calendars.ChangedEventArgs<DateTime?> args)
     {
-        var poolHashRateList = PoolHashRateService.Get();
+        From = args.Value.Value;
+        To = args.Value.Value.AddDays(constDay);
+        LoadData();
+    }
+    public void ToValueChangeHandler(Syncfusion.Blazor.Calendars.ChangedEventArgs<DateTime?> args)
+    {
+        To = args.Value.Value;
+        LoadData();
+    }
+    public void LoadData()
+    {
+        ChartData = new List<LineChartData> { };
+        var poolHashRateList = PoolHashRateService.Get(new DateTime(From.Year, From.Month, From.Day), new DateTime(To.Year, To.Month, To.Day, 23, 59, 59));
 
 
         foreach (var poolHashRate in poolHashRateList)
         {
-            if (poolHashRate.Values.Count==6)
+            if (poolHashRate.Values.Count == 6)
             {
                 ChartData.Add(
 new LineChartData
 {
-  xValue = poolHashRate.CreatedAt,
+    xValue = poolHashRate.CreatedAt,
 
-  yValue1 = Math.Round((double)poolHashRate.Values[0] / 1000000000, 2),
-  yValue2 = Math.Round((double)poolHashRate.Values[1] / 1000000000, 2),
-  yValue3 = Math.Round((double)poolHashRate.Values[2] / 1000000000, 2),
-  yValue4 = Math.Round((double)poolHashRate.Values[3] / 1000000000, 2),
-  yValue5 = Math.Round((double)poolHashRate.Values[4] / 1000000000, 2),
-  yValue6 = Math.Round((double)poolHashRate.Values[5] / 1000000000, 2),
+    yValue1 = Math.Round((double)poolHashRate.Values[0] / 1000000000, 2),
+    yValue2 = Math.Round((double)poolHashRate.Values[1] / 1000000000, 2),
+    yValue3 = Math.Round((double)poolHashRate.Values[2] / 1000000000, 2),
+    yValue4 = Math.Round((double)poolHashRate.Values[3] / 1000000000, 2),
+    yValue5 = Math.Round((double)poolHashRate.Values[4] / 1000000000, 2),
+    yValue6 = Math.Round((double)poolHashRate.Values[5] / 1000000000, 2),
+    yValueSum = Math.Round((double)poolHashRate.Values[0] / 1000000000, 2) +
+     Math.Round((double)poolHashRate.Values[1] / 1000000000, 2) +
+      Math.Round((double)poolHashRate.Values[2] / 1000000000, 2) +
+       Math.Round((double)poolHashRate.Values[3] / 1000000000, 2) +
+        Math.Round((double)poolHashRate.Values[4] / 1000000000, 2) +
+         Math.Round((double)poolHashRate.Values[5] / 1000000000, 2)
 }
   );
             }
 
         }
 
+    }
+    protected override void OnInitialized()
+    {
 
+        LoadData();
     }
     public class Data
     {

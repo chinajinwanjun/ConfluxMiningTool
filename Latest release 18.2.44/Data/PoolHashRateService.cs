@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-
+using System;
 namespace Latest_release_18._2._44.Data
 {
     public class Record
@@ -16,11 +16,11 @@ namespace Latest_release_18._2._44.Data
         {
             this.db = db;
         }
-        public List<Record> Get()
+        public List<Record> Get(DateTime From, DateTime To)
         {
-            var poolHashRate = db.PoolHashRates.OrderByDescending(x => x.ID).Take(1000).OrderBy(x=>x.ID).ToList();
+            var poolHashRate = db.PoolHashRates.Where(x => x.CreatedAt >= From && x.CreatedAt <= To).OrderByDescending(x => x.ID).OrderBy(x => x.ID).ToList();
             var createdAtList = poolHashRate.Select(x => x.CreatedAt.ToString("MM-dd HH:mm")).Distinct().ToList();
-         
+
             List<Record> recordList = new List<Record>();
             foreach (var createdAt in createdAtList)
             {

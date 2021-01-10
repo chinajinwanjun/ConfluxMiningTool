@@ -137,7 +137,7 @@ namespace ConfluxMiningTool.Controllers
         public dynamic GetMinerList(DateTime @from, DateTime @to)
         {
             var ret = transactionRepository.GetMinerList(from, @to.AddDays(1));
-            return JsonConvert.SerializeObject(ret);
+            return JsonConvert.SerializeObject(new { data= ret });
         }
     }
 }

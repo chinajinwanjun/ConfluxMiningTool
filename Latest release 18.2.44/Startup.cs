@@ -32,6 +32,7 @@ namespace Latest_release_18._2._44
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSyncfusionBlazor();
+
             services.AddDbContextPool<SoftwareDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<PoolHashRateService>();
             services.AddScoped<DailyTrustNodeService>();

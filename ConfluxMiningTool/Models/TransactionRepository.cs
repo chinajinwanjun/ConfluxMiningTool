@@ -98,7 +98,7 @@ namespace ConfluxMiningTool.Models
                     group miner by miner.miner into g
                     select new
                     {
-                        miner = g.First().miner,
+                        miner = g.First().miner.Substring(0, 6) + "**" + g.First().miner.Substring(g.First().miner.Length - 4, 4),
                         count = g.Count(),
                         detail = g.OrderBy(x => x.CreatedDate).Select(x => x.CreatedDate.ToShortDateString()),
                     }).ToList();

@@ -36,16 +36,13 @@ namespace ConfluxMiningTool
         }
         public void AddJob()
         {
-            //RecurringJob.AddOrUpdate(() => WriteMiningData(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-            //RecurringJob.AddOrUpdate(() => UpdateLatAndLon(), "*/5 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-            //RecurringJob.AddOrUpdate(() => WriteDailyTrustNode(), "30 23 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-            //RecurringJob.AddOrUpdate(() => BlockRate(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            //FCCFX
             RecurringJob.AddOrUpdate(() => StoreTransaction(), "*/2 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+            //Test Miner
             RecurringJob.AddOrUpdate(() => AddMiner(), "*/5 3,12,23,18,19 * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-        }
-
+            //Pool
             RecurringJob.AddOrUpdate(() => StorePoolData(), "*/10 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
-
+            //RecurringJob.AddOrUpdate(() => BlockRate(), "0 * * * *", TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
         }
         public class Block
         {
