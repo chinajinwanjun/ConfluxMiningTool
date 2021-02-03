@@ -94,7 +94,9 @@ namespace ConfluxMiningTool.Models
         }
         public dynamic GetMinerList(DateTime @from, DateTime to)
         {
-            return (from miner in db.Miner.Where(x => x.CreatedDate >= @from && x.CreatedDate <= to).ToList()
+            var f = new DateTime(from.Year, from.Month, from.Day, 0, 0, 0);
+            var t = new DateTime(to.Year, to.Month, to.Day, 23, 59, 59);
+            return (from miner in db.Miner.Where(x => x.CreatedDate >= f && x.CreatedDate <= t).ToList()
                     group miner by miner.miner into g
                     select new
                     {
