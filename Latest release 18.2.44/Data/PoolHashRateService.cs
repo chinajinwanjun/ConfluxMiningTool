@@ -49,6 +49,10 @@ namespace Latest_release_18._2._44.Data
                 {
                     valueList.Add(poolHashRate.FirstOrDefault(x => x.CreatedAt.ToString("MM-dd HH:mm") == createdAt && x.Name == "MatPool").Hashrate);
                 }
+                if (poolHashRate.FirstOrDefault(x => x.CreatedAt.ToString("MM-dd HH:mm") == createdAt && x.Name == "All") != null)
+                {
+                    valueList.Add(poolHashRate.FirstOrDefault(x => x.CreatedAt.ToString("MM-dd HH:mm") == createdAt && x.Name == "All").Hashrate);
+                }
                 recordList.Add(new Record { CreatedAt = createdAt, Values = valueList });
             }
             return recordList;

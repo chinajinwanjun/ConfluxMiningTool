@@ -80,18 +80,28 @@ namespace ConfluxMiningTool
             var str = http.GetAsync($@"http://www.wabi.com/coins/conflux").Result.Content.ReadAsStringAsync().Result;
             Regex regex = new Regex("_blank\">(.+?)<\\/a>[\\s\\S]{3,100}data-sort=\"(\\d+)\"");
             List<PoolHashRate> poolHashRateList = new List<PoolHashRate>();
+            var now = DateTime.Now;
             foreach (Match match in regex.Matches(str))
             {
                 var poolName = match.Groups[1].Value;
                 var hashRate = match.Groups[2].Value;
                 var poolHashRate = new PoolHashRate
                 {
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = now,
                     Hashrate = Convert.ToInt64(hashRate),
                     Name = poolName,
                 };
                 poolHashRateList.Add(poolHashRate);
             }
+            str = http.GetAsync($@"https://confluxscan.io/v1/plot?interval=514&limit=1").Result.Content.ReadAsStringAsync().Result;
+            regex = new Regex("\"hashRate\":\"([\\d]+)");
+
+            poolHashRateList.Add(new PoolHashRate
+            {
+                CreatedAt = now,
+                Hashrate = Convert.ToInt64(regex.Match(str).Groups[1].Value),
+                Name = "All",
+            });
             transactionRepository.AddPoolHashRate(poolHashRateList);
         }
         public void AddMiner()
@@ -104,7 +114,7 @@ namespace ConfluxMiningTool
                 transactionRepository.AddMiner(miner);
             }
         }
-        public   DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        public DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
@@ -115,7 +125,7 @@ namespace ConfluxMiningTool
         {
             HttpClient http = new HttpClient();
             var transactionHashs = transactionRepository.GetAllHash();
-            for (int i = 0; i <20; i++)
+            for (int i = 0; i < 20; i++)
             {
                 var str = http.GetAsync($@"https://confluxscan.io/v1/transfer?accountAddress=cfx%3Aacdrd6ahf4fmdj6rgw4n9k4wdxrzfe6ex6jc7pw50m&transferType=ERC20&limit=100&skip={i * 100}").Result.Content.ReadAsStringAsync().Result;
                 var rawTrans = JsonConvert.DeserializeObject<RawTrans>(str);
@@ -123,7 +133,7 @@ namespace ConfluxMiningTool
                 {
                     if (!transactionHashs.Contains(block.transactionHash))
                     {
-                        transactionRepository.Add(new Transaction { from = block.from, transactionHash = block.transactionHash, value = block.value / 1000000000000000000 , createdTime= UnixTimeStampToDateTime(block.timestamp)});
+                        transactionRepository.Add(new Transaction { from = block.from, transactionHash = block.transactionHash, value = block.value / 1000000000000000000, createdTime = UnixTimeStampToDateTime(block.timestamp) });
                     }
                 }
             }

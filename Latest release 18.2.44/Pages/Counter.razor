@@ -41,7 +41,12 @@
         </ChartPrimaryYAxis>
         <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
         <ChartSeriesCollection>
-            <ChartSeries DataSource="@ChartData" Name="总算力" XName="xValue" Width="2"
+            <ChartSeries DataSource="@ChartData" Name="全网总算力" XName="xValue" Width="2"
+                         Opacity="1" YName="yValueAll" Type="ChartSeriesType.Line">
+                <ChartMarker Visible="true" Width="10" Height="10">
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" Name="已知矿池总算力" XName="xValue" Width="2"
                          Opacity="1" YName="yValueSum" Type="ChartSeriesType.Line">
                 <ChartMarker Visible="true" Width="10" Height="10">
                 </ChartMarker>
@@ -96,6 +101,7 @@
         public double yValue3 { get; set; }
         public double yValue4 { get; set; }
         public double yValueSum { get; set; }
+        public double yValueAll { get; set; }
     }
 
     public class Statistics
@@ -127,7 +133,7 @@
 
         foreach (var poolHashRate in poolHashRateList)
         {
-            if (poolHashRate.Values.Count == 6)
+            if (poolHashRate.Values.Count == 7)
             {
                 ChartData.Add(
 new LineChartData
@@ -140,6 +146,7 @@ new LineChartData
     yValue4 = Math.Round((double)poolHashRate.Values[3] / 1000000000, 2),
     yValue5 = Math.Round((double)poolHashRate.Values[4] / 1000000000, 2),
     yValue6 = Math.Round((double)poolHashRate.Values[5] / 1000000000, 2),
+    yValueAll = Math.Round((double)poolHashRate.Values[6] / 1000000000, 2),
     yValueSum = Math.Round((double)poolHashRate.Values[0] / 1000000000, 2) +
      Math.Round((double)poolHashRate.Values[1] / 1000000000, 2) +
       Math.Round((double)poolHashRate.Values[2] / 1000000000, 2) +
