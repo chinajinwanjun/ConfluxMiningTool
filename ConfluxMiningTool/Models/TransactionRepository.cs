@@ -21,6 +21,8 @@ namespace ConfluxMiningTool.Models
         public string from { get; set; }
         public decimal value { get; set; }
         public DateTime createdTime { get; set; }
+        public double timestamp { get; set; }
+
     }
     public class PoolHashRate
     {
@@ -49,7 +51,6 @@ namespace ConfluxMiningTool.Models
         }
         public void Add(Transaction Transaction)
         {
-            Transaction.createdTime = DateTime.Now;
             db.Transaction.Add(Transaction);
             db.SaveChanges();
         }

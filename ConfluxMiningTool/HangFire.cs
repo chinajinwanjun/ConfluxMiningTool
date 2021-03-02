@@ -104,19 +104,26 @@ namespace ConfluxMiningTool
                 transactionRepository.AddMiner(miner);
             }
         }
+        public   DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
         public void StoreTransaction()
         {
             HttpClient http = new HttpClient();
             var transactionHashs = transactionRepository.GetAllHash();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i <20; i++)
             {
-                var str = http.GetAsync($@"https://confluxscan.io/v1/transfer?accountAddress=0x86d1f0072e8aa1a38d34b4bfa7521cdb5293849f&limit=100&skip={i * 100}").Result.Content.ReadAsStringAsync().Result;
+                var str = http.GetAsync($@"https://confluxscan.io/v1/transfer?accountAddress=cfx%3Aacdrd6ahf4fmdj6rgw4n9k4wdxrzfe6ex6jc7pw50m&transferType=ERC20&limit=100&skip={i * 100}").Result.Content.ReadAsStringAsync().Result;
                 var rawTrans = JsonConvert.DeserializeObject<RawTrans>(str);
                 foreach (var block in rawTrans.list)
                 {
                     if (!transactionHashs.Contains(block.transactionHash))
                     {
-                        transactionRepository.Add(new Transaction { from = block.from, transactionHash = block.transactionHash, value = block.value / 1000000000000000000 });
+                        transactionRepository.Add(new Transaction { from = block.from, transactionHash = block.transactionHash, value = block.value / 1000000000000000000 , createdTime= UnixTimeStampToDateTime(block.timestamp)});
                     }
                 }
             }
